@@ -61,12 +61,17 @@ def get_caches(restrictions):
     full_restrictions = _get_full_restrictions(restrictions)
 
     caches = {}
+    inverted_caches = {}
 
     for word in r.WORD_TYPE.records:
         cache = {}
+        inverted_cache = []
+
         caches[word] = cache
+        inverted_caches[word] = inverted_cache
 
         for i, key in enumerate(_keys_generator(word.schema, restrictions=full_restrictions)):
             cache[tuple(key)] = i
+            inverted_cache.append(tuple(key))
 
-    return caches
+    return caches, inverted_caches

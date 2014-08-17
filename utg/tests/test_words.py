@@ -85,9 +85,7 @@ class WordTests(TestCase):
         self.assertEqual(word.properties, words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
 
     def test_form(self):
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
 
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'ед3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'мн3')
@@ -95,17 +93,13 @@ class WordTests(TestCase):
 
 
     def test_form__optional_property(self):
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'мн3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'мн3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'мн3')
 
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
+        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
 
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'ед3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'ед3')

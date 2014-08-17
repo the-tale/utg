@@ -48,9 +48,9 @@ class ASPECT(WORD_PROPERTY):
                 ('PERFECTIVE', 1, u'совершенный', u'сов') )
 
 class MOOD(WORD_PROPERTY):
-    records = ( ('indicative', 0, u'изъявительное наклонение', u'изъяв'),
-                ('conditional', 1, u'согласительно наклонение', u'согл'),
-                ('imperative', 2, u'повелительное', u'пов') )
+    records = ( ('INDICATIVE', 0, u'изъявительное наклонение', u'изъяв'),
+                ('CONDITIONAL', 1, u'согласительно наклонение', u'согл'),
+                ('IMPERATIVE', 2, u'повелительное', u'пов') )
 
 class ADJECTIVE_CATEGORY(WORD_PROPERTY):
     records = ( ('QUALITY', 0, u'качественное', u'кач'),

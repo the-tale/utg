@@ -6,7 +6,9 @@ from utg import words
 from utg import templates
 from utg import exceptions
 from utg import relations as r
+from utg.dictionary import Dictionary
 from utg.tests import helpers
+
 
 class SubstitutionTests(TestCase):
 
@@ -83,3 +85,64 @@ class SubstitutionTests(TestCase):
                           forms=helpers.TestForms.NOUN,
                           properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
         self.assertEqual(substitution._merge_properties(externals={'external': word}), words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE, r.TIME.FUTURE))
+
+
+
+class TemplateTests(TestCase):
+
+    def setUp(self):
+        super(TemplateTests, self).setUp()
+
+
+    def test_init(self):
+        template = templates.Template()
+        self.assertEqual(template._substitutions, [])
+        self.assertEqual(template._template, None)
+
+
+    def test_parse(self):
+        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [external_2|тв,ед]'
+
+        template = templates.Template()
+
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        self.assertEqual(template._template, u'%s 1 %s 2 %s')
+
+        self.assertEqual(len(template._substitutions), 3)
+
+        substitution = template._substitutions[0]
+        self.assertEqual(substitution.id, 'external_1')
+        self.assertEqual(substitution.dependencies, [words.Properties(r.WORD_CASE.UPPER)])
+
+        substitution = template._substitutions[1]
+        self.assertEqual(substitution.id, u'ед3')
+        self.assertEqual(substitution.dependencies, ['external_2', words.Properties(r.TIME.FUTURE)])
+
+        substitution = template._substitutions[2]
+        self.assertEqual(substitution.id, 'external_2')
+        self.assertEqual(substitution.dependencies, [words.Properties(r.CASE.INSTRUMENTAL, r.NUMBER.SINGULAR)])
+
+
+    def test_substitute(self):
+        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [external_2|тв,ед]'
+
+        word_1 = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_2 = helpers.create_noun(prefix=u'x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word_3 = helpers.create_noun(prefix=u'y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+
+        dictionary = Dictionary()
+
+        dictionary.add_word(word_1)
+        dictionary.add_word(word_2)
+        dictionary.add_word(word_3)
+
+        template = templates.Template()
+
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        result = template.substitute(externals={'external_1': word_2,
+                                                'external_2': word_3},
+                                    dictionary=dictionary)
+
+        self.assertEqual(result, u'X-ед1 1 мн3 2 y-мн5')

@@ -11,8 +11,6 @@ _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
 _VERBOSE_TO_PROPERTIES = logic.get_verbose_to_relations()
 
-# "«[initiator|загл] [обратился|initiator|прш] ко мне с просьбой проследить за одним из жителей [receiver_position|рд]. Есть подозрения, что [receiver] проворачивает нечистые делишки.»"
-
 
 class Substitution(object):
     __slots__ = ('id', 'dependencies')
@@ -80,10 +78,17 @@ class Substitution(object):
 
         if self.id in externals:
             word = externals[self.id]
+            word_properties = properties
         else:
-            word = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
+            word, word_properties = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
+            word_properties.update(properties)
 
-        return word.form(properties)
+        form = word.form(word_properties)
+
+        if properties.get(r.WORD_CASE).is_UPPER:
+            form = form[0].upper() + form[1:]
+
+        return form
 
 
 class Template(object):
@@ -93,16 +98,16 @@ class Template(object):
         self._substitutions = []
         self._template = None
 
-    def parse(self, text, dictionary):
+    def parse(self, text, externals):
 
         variables = _VARIABLE_REGEX.findall(text)
 
         for i, variable in enumerate(variables):
-            self._substitutions.append(Substitution.parse(variable))
-            text = text.replace(variable, '%s', max=1)
+            self._substitutions.append(Substitution.parse(variable, externals=externals))
+            text = text.replace(variable, '%s', 1)
 
         self._template = text
 
     def substitute(self, externals, dictionary):
-        substitutions = [substitution.get_word(dictionary, externals) for substitution in self._substitutions]
-        return self._template % substitutions
+        substitutions = [substitution.get_word(externals=externals, dictionary=dictionary) for substitution in self._substitutions]
+        return self._template % tuple(substitutions)

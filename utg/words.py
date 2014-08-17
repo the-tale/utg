@@ -52,12 +52,15 @@ class Properties(object):
         obj._data = copy.copy(self._data)
         return obj
 
+    def __unicode__(self):
+        return u'(%s)' % (u','.join(property.verbose_id for property in self._data.itervalues()))
+
     def __eq__(self, other):
         return self._data == other._data
 
 
 class Word(object):
-    CACHES = logic.get_caches(restrictions=_RESTRICTIONS)
+    CACHES, INVERTED_CACHES = logic.get_caches(restrictions=_RESTRICTIONS)
 
     def __init__(self, type, forms, properties):
         self.type = type

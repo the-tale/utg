@@ -79,15 +79,15 @@ class WORD_CASE(WORD_PROPERTY):
                 ('UPPER', 1, u'заглавная', u'загл') )
 
 
-class WORD_TYPE(EnumWithText):
+class WORD_TYPE(WORD_PROPERTY):
     schema = Column(unique=False)
     properties = Column(unique=False, no_index=True)
 
-    records = ( ('NOUN', 0, u'существительное', (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }), # нарицательность, разряд, склонение
-                ('ADJECTIVE', 1, u'прилагательное', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
-                ('PRONOUN', 2, u'местоимение', ( NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
-                ('PARTICIPLE', 4, u'причастие', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}) )
+    records = ( ('NOUN', 0, u'существительное', u'сущ', (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }), # нарицательность, разряд, склонение
+                ('ADJECTIVE', 1, u'прилагательное', u'прил', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
+                ('PRONOUN', 2, u'местоимение', u'мест', ( NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
+                ('VERB', 3, u'глагол', u'гл', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}) )
 
 # имя числительное;
 # наречие;

@@ -15,6 +15,17 @@ def get_default_properties():
     for relation in get_property_relations():
         values[relation] = relation.records[0]
 
+    values[r.WORD_TYPE] = None
+
+    return values
+
+def get_verbose_to_relations():
+    values = {}
+
+    for relation in get_property_relations():
+        for record in relation.records:
+            values[record.verbose_id] = record
+
     return values
 
 

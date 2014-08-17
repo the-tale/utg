@@ -26,7 +26,8 @@ class LogicTests(TestCase):
                           r.ADJECTIVE_CATEGORY.QUALITY,
                           r.NUMBER.SINGULAR,
                           r.ASPECT.IMPERFECTIVE,
-                          r.MOOD.indicative])
+                          r.MOOD.indicative,
+                          None])
 
         self.assertEqual(set(logic.get_default_properties().values()),
                          properties)

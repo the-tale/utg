@@ -27,7 +27,8 @@ class GeneralTests(TestCase):
                                r.ADJECTIVE_CATEGORY,
                                r.GRADE,
                                r.PRONOUN_CATEGORY,
-                               r.WORD_CASE]))
+                               r.WORD_CASE,
+                               r.WORD_TYPE]))
 
     def test_scheme_orders(self):
         expected_order = [ r.FORM,
@@ -45,7 +46,9 @@ class GeneralTests(TestCase):
                            r.GRADE,
                            r.MOOD,
 
-                           r.WORD_CASE]
+                           r.WORD_CASE,
+
+                           r.WORD_TYPE]
 
         self.assertEqual(set(logic.get_property_relations()), set(expected_order))
 

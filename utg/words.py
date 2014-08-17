@@ -23,20 +23,37 @@ _RESTRICTIONS = {r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD),
                  r.PRONOUN_CATEGORY.MUTUAL: (r.PERSON,) }
 
 
+_DEFAULT_PROPERTIES = logic.get_default_properties()
 
 class Properties(object):
-    DEFAULT_PROPERTIES = logic.get_default_properties()
+
 
     def __init__(self, *argv):
-        self._data = copy.copy(self.DEFAULT_PROPERTIES)
+        self._data = {}
         self.update(*argv)
 
     def update(self, *argv):
         for property in argv:
-            self._data[property._relation] = property
+            if isinstance(property, self.__class__):
+                self._data.update(property._data)
+            else:
+                self._data[property._relation] = property
 
     def get_key(self, *argv):
-        return tuple(self._data[property_group] for property_group in argv)
+        return tuple(self.get(property_group) for property_group in argv)
+
+    def get(self, property_group):
+        if property_group in self._data:
+            return self._data[property_group]
+        return _DEFAULT_PROPERTIES[property_group]
+
+    def clone(self):
+        obj = self.__class__()
+        obj._data = copy.copy(self._data)
+        return obj
+
+    def __eq__(self, other):
+        return self._data == other._data
 
 
 class Word(object):
@@ -47,13 +64,25 @@ class Word(object):
         self.forms = forms
         self.properties = properties
 
+    def form(self, properties):
+        real_properties = properties.clone()
+        real_properties.update(self.properties)
+        return self.forms[self.CACHES[self.type][real_properties.get_key(*self.type.schema)]]
 
-    def get_form(self, properties):
-        return self.forms[self.CACHES[self.type][properties.get_key(*self.type.schema)]]
+    def __eq__(self, other):
+        return (self.type == other.type and
+                self.properties == other.properties and
+                self.forms == other.forms)
 
+    @classmethod
+    def get_forms_number(cls, type):
+        return len(cls.CACHES[type])
 
-class WordForm(object):
+    @classmethod
+    def create_test_word(cls, type):
+        cache = cls.CACHES[type]
+        forms = [None] * len(cache)
+        for key, index in cache.iteritems():
+            forms[index] = u','.joint(property.verbose_id for property in key)
 
-    def __init__(self, word, properties):
-        self.word = word
-        self.properties = properties
+        return cls(type=type, forms=forms, properties=Properties())

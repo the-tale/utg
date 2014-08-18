@@ -5,3 +5,4 @@ from utg.tests.test_logic import *
 from utg.tests.test_words import *
 from utg.tests.test_templates import *
 from utg.tests.test_dictionary import *
+from utg.tests.test_lexicon import *

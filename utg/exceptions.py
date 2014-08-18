@@ -31,3 +31,7 @@ class NoWordsFoundError(WordsError):
 
 class MoreThenOneWordFoundError(WordsError):
     MSG = u'more then one word found for text="%(text)s" and type=%(type)s'
+
+
+class UnknownLexiconKeyError(WordsError):
+    MSG = u'unknown lexicon key: %(key)s'

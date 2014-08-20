@@ -17,21 +17,21 @@ class CASE(WORD_PROPERTY):
 
 
 class ANIMALITY(WORD_PROPERTY):
-    records = ( ('ANIMATE', 0, u'одушевлённый', u'од'),
-                ('INANIMATE', 1, u'неодушевлённый', u'но') )
+    records = ( ('ANIMATE', 0, u'одушевлённое', u'од'),
+                ('INANIMATE', 1, u'неодушевлённое', u'но') )
 
 class NUMBER(WORD_PROPERTY):
     records = ( ('SINGULAR', 0, u'единственное число', u'ед'),
                 ('PLURAL', 1, u'множественное', u'мн') )
 
 class GENDER(WORD_PROPERTY):
-    records = ( ('MASCULINE', 0, u'мужской', u'мр'),
-                ('NEUTER', 1, u'средний', u'ср'),
-                ('FEMININE', 2, u'женский', u'жр') )
+    records = ( ('MASCULINE', 0, u'мужской род', u'мр'),
+                ('NEUTER', 1, u'средний род', u'ср'),
+                ('FEMININE', 2, u'женский род', u'жр') )
 
 class FORM(WORD_PROPERTY):
-    records = ( ('NORMAL', 0, u'нормальная', u'норм'),
-                ('INFINITIVE', 1, u'инфинитив', u'инф') )
+    records = ( ('INFINITIVE', 0, u'инфинитив', u'инф'),
+                ('NORMAL', 1, u'нормальная форма', u'норм'), )
 
 class TIME(WORD_PROPERTY):
     records = ( ('PAST', 1, u'прошлое', u'прш'),
@@ -39,7 +39,7 @@ class TIME(WORD_PROPERTY):
                 ('FUTURE', 3, u'будущее', u'буд') )
 
 class PERSON(WORD_PROPERTY):
-    records = ( ('FIRSTH', 0, u'1-ое лицо', u'1л'),
+    records = ( ('FIRST', 0, u'1-ое лицо', u'1л'),
                 ('SECOND', 1, u'2-ое лицо', u'2л'),
                 ('THIRD', 2, u'3-е лицо', u'3л') )
 
@@ -50,7 +50,7 @@ class ASPECT(WORD_PROPERTY):
 class MOOD(WORD_PROPERTY):
     records = ( ('INDICATIVE', 0, u'изъявительное наклонение', u'изъяв'),
                 ('CONDITIONAL', 1, u'согласительно наклонение', u'согл'),
-                ('IMPERATIVE', 2, u'повелительное', u'пов') )
+                ('IMPERATIVE', 2, u'повелительное наклонение', u'пов') )
 
 class ADJECTIVE_CATEGORY(WORD_PROPERTY):
     records = ( ('QUALITY', 0, u'качественное', u'кач'),

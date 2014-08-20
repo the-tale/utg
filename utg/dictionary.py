@@ -48,4 +48,4 @@ class Dictionary(object):
 
         word, cache_index = choices[0]
 
-        return word, words.Properties(*word.INVERTED_CACHES[word.type][cache_index])
+        return word, words.Properties(*words.INVERTED_WORDS_CACHES[word.type][cache_index])

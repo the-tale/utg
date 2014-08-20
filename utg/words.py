@@ -5,13 +5,13 @@ from utg import relations as r
 from utg import logic
 
 
-_RESTRICTIONS = {r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD),
+RESTRICTIONS = { r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD, r.GENDER),
                  r.NUMBER.PLURAL: (r.GENDER,),
                  r.TIME.PRESENT: (r.GENDER, r.MOOD),
                  r.TIME.FUTURE: (r.GENDER,),
                  r.ADJECTIVE_CATEGORY.RELATIVE: (r.GRADE,),
                  r.ADJECTIVE_CATEGORY.POSSESSIVE: (r.GRADE,),
-                 r.PERSON.FIRSTH: (r.GENDER,),
+                 r.PERSON.FIRST: (r.GENDER,),
                  r.PERSON.SECOND: (r.GENDER,),
                  r.PRONOUN_CATEGORY.REFLEXIVE: (r.NUMBER, r.GENDER, r.PERSON),
                  r.PRONOUN_CATEGORY.INTERROGATIVE: (r.PERSON,),
@@ -22,8 +22,10 @@ _RESTRICTIONS = {r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD),
                  r.PRONOUN_CATEGORY.VAGUE: (r.PERSON,),
                  r.PRONOUN_CATEGORY.MUTUAL: (r.PERSON,) }
 
-
 _DEFAULT_PROPERTIES = logic.get_default_properties()
+
+WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)
+
 
 class Properties(object):
 
@@ -34,6 +36,9 @@ class Properties(object):
 
     def update(self, *argv):
         for property in argv:
+            if property is None:
+                continue
+
             if isinstance(property, self.__class__):
                 self._data.update(property._data)
             else:
@@ -60,7 +65,6 @@ class Properties(object):
 
 
 class Word(object):
-    CACHES, INVERTED_CACHES = logic.get_caches(restrictions=_RESTRICTIONS)
 
     def __init__(self, type, forms, properties):
         self.type = type
@@ -70,7 +74,7 @@ class Word(object):
     def form(self, properties):
         real_properties = properties.clone()
         real_properties.update(self.properties)
-        return self.forms[self.CACHES[self.type][real_properties.get_key(*self.type.schema)]]
+        return self.forms[WORDS_CACHES[self.type][real_properties.get_key(*self.type.schema)]]
 
     def __eq__(self, other):
         return (self.type == other.type and
@@ -79,11 +83,11 @@ class Word(object):
 
     @classmethod
     def get_forms_number(cls, type):
-        return len(cls.CACHES[type])
+        return len(WORDS_CACHES[type])
 
     @classmethod
     def create_test_word(cls, type):
-        cache = cls.CACHES[type]
+        cache = WORDS_CACHES[type]
         forms = [None] * len(cache)
         for key, index in cache.iteritems():
             forms[index] = u','.joint(property.verbose_id for property in key)

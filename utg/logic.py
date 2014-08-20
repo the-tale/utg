@@ -29,17 +29,23 @@ def get_verbose_to_relations():
     return values
 
 
-def _keys_generator(schema, restrictions):
+def _keys_generator(left, right, restrictions):
 
-    if not schema:
+    if not right:
         yield []
         return
 
-    for head in schema[0].records:
-        for tail in _keys_generator(schema[1:], restrictions):
-            if any((head, tail_property) in restrictions for tail_property in tail):
-                continue
-            yield [head] + tail
+    central, right = right[0], right[1:]
+
+    for used_property in left:
+        if used_property in restrictions and central in restrictions[used_property]:
+            for tail in _keys_generator(left + [None], right, restrictions):
+                yield [None] + tail
+            return
+
+    for record in central.records:
+        for tail in _keys_generator(left + [record], right, restrictions):
+            yield [record] + tail
 
     return
 
@@ -58,8 +64,6 @@ def _get_full_restrictions(restrictions):
 
 def get_caches(restrictions):
 
-    full_restrictions = _get_full_restrictions(restrictions)
-
     caches = {}
     inverted_caches = {}
 
@@ -70,7 +74,7 @@ def get_caches(restrictions):
         caches[word] = cache
         inverted_caches[word] = inverted_cache
 
-        for i, key in enumerate(_keys_generator(word.schema, restrictions=full_restrictions)):
+        for i, key in enumerate(_keys_generator([], word.schema, restrictions=restrictions)):
             cache[tuple(key)] = i
             inverted_cache.append(tuple(key))
 

@@ -169,5 +169,6 @@ class DictionaryTests(TestCase):
 
         self.assertEqual(self.dictionary.get_word('x2', type=r.WORD_TYPE.NOUN),
                          (word_1, words.Properties(r.CASE.GENITIVE, r.NUMBER.SINGULAR)))
+
         self.assertEqual(self.dictionary.get_word('x2', type=r.WORD_TYPE.VERB),
-                         (word_2, words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.PERSON.THIRD, r.GENDER.MASCULINE, r.MOOD.CONDITIONAL)))
+                         (word_2, words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.PERSON.FIRST, r.MOOD.INDICATIVE)))

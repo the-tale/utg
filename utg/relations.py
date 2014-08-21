@@ -22,7 +22,7 @@ class ANIMALITY(WORD_PROPERTY):
 
 class NUMBER(WORD_PROPERTY):
     records = ( ('SINGULAR', 0, u'единственное число', u'ед'),
-                ('PLURAL', 1, u'множественное', u'мн') )
+                ('PLURAL', 1, u'множественное число', u'мн') )
 
 class GENDER(WORD_PROPERTY):
     records = ( ('MASCULINE', 0, u'мужской род', u'мр'),
@@ -34,9 +34,9 @@ class FORM(WORD_PROPERTY):
                 ('NORMAL', 1, u'нормальная форма', u'норм'), )
 
 class TIME(WORD_PROPERTY):
-    records = ( ('PAST', 1, u'прошлое', u'прш'),
-                ('PRESENT', 2, u'настоящее', u'нст'),
-                ('FUTURE', 3, u'будущее', u'буд') )
+    records = ( ('PAST', 1, u'прошлое время', u'прш'),
+                ('PRESENT', 2, u'настоящее время', u'нст'),
+                ('FUTURE', 3, u'будущее будущее', u'буд') )
 
 class PERSON(WORD_PROPERTY):
     records = ( ('FIRST', 0, u'1-ое лицо', u'1л'),
@@ -49,7 +49,7 @@ class ASPECT(WORD_PROPERTY):
 
 class MOOD(WORD_PROPERTY):
     records = ( ('INDICATIVE', 0, u'изъявительное наклонение', u'изъяв'),
-                ('CONDITIONAL', 1, u'согласительно наклонение', u'согл'),
+                ('CONDITIONAL', 1, u'согласительное наклонение', u'согл'),
                 ('IMPERATIVE', 2, u'повелительное наклонение', u'пов') )
 
 class ADJECTIVE_CATEGORY(WORD_PROPERTY):

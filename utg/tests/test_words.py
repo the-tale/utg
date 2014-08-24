@@ -25,6 +25,10 @@ class PropertiesTests(TestCase):
         self.assertTrue(properties._data[r.NUMBER].is_PLURAL)
         self.assertTrue(properties._data[r.PERSON].is_SECOND)
 
+    def test_serialization(self):
+        properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
+        self.assertEqual(properties.serialize(), words.Properties.deserialize(properties.serialize()).serialize())
+
     def test_update__empty(self):
         properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
 
@@ -83,6 +87,11 @@ class WordTests(TestCase):
         self.assertTrue(word.type.is_VERB)
         self.assertEqual(word.forms, ['x1', 'x2', 'x3'])
         self.assertEqual(word.properties, words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
+
+    def test_serialization(self):
+        word = words.Word(type=r.WORD_TYPE.VERB, forms=['x1', 'x2', 'x3'], properties=words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
+        self.assertEqual(word.serialize(), words.Word.deserialize(word.serialize()).serialize())
+
 
     def test_form(self):
         word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))

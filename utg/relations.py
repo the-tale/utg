@@ -89,6 +89,25 @@ class WORD_TYPE(WORD_PROPERTY):
                 ('VERB', 3, u'глагол', u'гл', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
                 ('PARTICIPLE', 4, u'причастие', u'прич', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}) )
 
+
+class PROPERTY_TYPE(EnumWithText):
+    relation = Column()
+
+    records = ( ('CASE', 0, u'падеж', CASE),
+                ('ANIMALITY', 1, u'одушевлённость', ANIMALITY),
+                ('NUMBER', 2, u'число', NUMBER),
+                ('GENDER', 3, u'род', GENDER),
+                ('FORM', 4, u'форма глагола', FORM),
+                ('TIME', 5, u'время', TIME),
+                ('PERSON', 6, u'лицо', PERSON),
+                ('ASPECT', 7, u'вид', ASPECT),
+                ('MOOD', 8, u'наклонение', MOOD),
+                ('ADJECTIVE_CATEGORY', 9, u'категория прилагательного', ADJECTIVE_CATEGORY),
+                ('GRADE', 10, u'степень прилагательного', GRADE),
+                ('PRONOUN_CATEGORY', 11, u'категория местоимения', PRONOUN_CATEGORY),
+                ('WORD_CASE', 12, u'размер 1-ой буквы', WORD_CASE),
+                ('WORD_TYPE', 13, u'часть речи', WORD_TYPE) )
+
 # имя числительное;
 # наречие;
 # предлог;

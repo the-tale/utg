@@ -73,3 +73,7 @@ class GeneralTests(TestCase):
             for property in properties_relation.records:
                 self.assertFalse(property.verbose_id in properties)
                 properties.add(property.verbose_id)
+
+    def test_all_property_types_in_relation(self):
+        for properties_relation in logic.get_property_relations():
+            self.assertTrue(properties_relation in r.PROPERTY_TYPE.index_relation)

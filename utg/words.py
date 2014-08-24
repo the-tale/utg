@@ -1,5 +1,6 @@
 # coding: utf-8
 import copy
+import random
 
 from utg import relations as r
 from utg import logic
@@ -34,6 +35,15 @@ class Properties(object):
         self._data = {}
         self.update(*argv)
 
+    def serialize(self):
+        return {r.PROPERTY_TYPE.index_relation[property_type].value: property.value
+                for property_type, property in self._data.iteritems()}
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls(*[r.PROPERTY_TYPE(int(property_type)).relation(property_value)
+                     for property_type, property_value in data.iteritems()])
+
     def update(self, *argv):
         for property in argv:
             if property is None:
@@ -51,6 +61,9 @@ class Properties(object):
         if property_group in self._data:
             return self._data[property_group]
         return _DEFAULT_PROPERTIES[property_group]
+
+    def is_specified(self, property_group):
+        return property_group in self._data
 
     def clone(self):
         obj = self.__class__()
@@ -71,10 +84,24 @@ class Word(object):
         self.forms = forms
         self.properties = properties
 
+    def serialize(self):
+        return {'type': self.type.value,
+                'forms': self.forms,
+                'properties': self.properties.serialize()}
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls(type=r.WORD_TYPE(data['type']),
+                   forms=data['forms'],
+                   properties=Properties.deserialize(data['properties']))
+
     def form(self, properties):
         real_properties = properties.clone()
         real_properties.update(self.properties)
         return self.forms[WORDS_CACHES[self.type][real_properties.get_key(*self.type.schema)]]
+
+    def normal_form(self):
+        return self.forms[0]
 
     def __eq__(self, other):
         return (self.type == other.type and
@@ -90,6 +117,13 @@ class Word(object):
         cache = WORDS_CACHES[type]
         forms = [None] * len(cache)
         for key, index in cache.iteritems():
-            forms[index] = u','.joint(property.verbose_id for property in key)
+            forms[index] = u','.join(property.verbose_id for property in key if property is not None)
 
-        return cls(type=type, forms=forms, properties=Properties())
+        properties = Properties()
+
+        for relation, required in type.properties.iteritems():
+            if not required and random.random() > 0.5:
+                continue
+            properties.update(random.choice(relation.records))
+
+        return cls(type=type, forms=forms, properties=properties)

@@ -22,6 +22,11 @@ class SubstitutionTests(TestCase):
         self.assertEqual(substitution.dependencies, [])
 
 
+    def test_serialization(self):
+        substitution = templates.Substitution.parse(variable=u'[bla-bla|external_1|дт|external_2|вн,личн]', externals=['bla-bla', 'external_1', 'external_2'])
+        self.assertEqual(substitution.serialize(), templates.Substitution.deserialize(substitution.serialize()).serialize())
+
+
     def test_parse__no_slugs(self):
         self.assertRaises(exceptions.WrongDependencyFormatError, templates.Substitution.parse, variable=u'', externals=[])
         self.assertRaises(exceptions.WrongDependencyFormatError, templates.Substitution.parse, variable=u'[]', externals=[])
@@ -97,7 +102,15 @@ class TemplateTests(TestCase):
     def test_init(self):
         template = templates.Template()
         self.assertEqual(template._substitutions, [])
-        self.assertEqual(template._template, None)
+        self.assertEqual(template.template, None)
+
+
+    def test_serialization(self):
+        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [external_2|тв,ед]'
+        template = templates.Template()
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        self.assertEqual(template.serialize(), templates.Template.deserialize(template.serialize()).serialize())
 
 
     def test_parse(self):
@@ -107,7 +120,7 @@ class TemplateTests(TestCase):
 
         template.parse(TEXT, externals=['external_1', 'external_2'])
 
-        self.assertEqual(template._template, u'%s 1 %s 2 %s')
+        self.assertEqual(template.template, u'%s 1 %s 2 %s')
 
         self.assertEqual(len(template._substitutions), 3)
 

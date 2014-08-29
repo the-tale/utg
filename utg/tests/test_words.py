@@ -60,8 +60,15 @@ class PropertiesTests(TestCase):
 
     def test_get_key(self):
         properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
-        self.assertEqual(properties.get_key(), ())
-        self.assertEqual(properties.get_key(r.TIME, r.CASE, r.PERSON), (r.TIME.PAST, r.CASE.DATIVE, r.PERSON.SECOND))
+        self.assertEqual(properties.get_key(key=[]), ())
+        self.assertEqual(properties.get_key(key=(r.TIME, r.CASE, r.PERSON)), (r.TIME.PAST, r.CASE.DATIVE, r.PERSON.SECOND))
+
+    def test_get_key__restrictions(self):
+        properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND, r.GENDER.FEMININE)
+        schema = (r.TIME, r.CASE, r.GENDER, r.PERSON)
+        key = (r.CASE, r.GENDER, r.PERSON)
+        self.assertEqual(properties.get_key(schema=schema, key=key),
+                         (r.CASE.DATIVE, None, r.PERSON.SECOND))
 
     def test_eq(self):
         properties_1 = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
@@ -113,3 +120,12 @@ class WordTests(TestCase):
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'ед3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'ед3')
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'ед3')
+
+    def test_normal_form(self):
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
+        self.assertEqual(word.normal_form(), word.forms[0])
+
+    def test_normal_form__fixed_properties(self):
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
+        word.properties.update(r.NUMBER.PLURAL)
+        self.assertEqual(word.normal_form(), word.forms[6])

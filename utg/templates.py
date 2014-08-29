@@ -19,6 +19,18 @@ class Substitution(object):
         self.id = None
         self.dependencies = []
 
+    def serialize(self):
+        return {'id': self.id,
+                'dependencies': [dep if isinstance(dep, basestring) else dep.serialize() for dep in self.dependencies]}
+
+    @classmethod
+    def deserialize(cls, data):
+        obj = cls()
+        obj.id = data['id']
+        obj.dependencies = [dep if isinstance(dep, basestring) else words.Properties.deserialize(dep) for dep in data['dependencies']]
+
+        return obj
+
     @classmethod
     def parse(cls, variable, externals):
         slugs = variable[1:-1].lower().split('|')
@@ -90,13 +102,29 @@ class Substitution(object):
 
         return form
 
+    def __eq__(self, other):
+        return (self.id == other.id and
+                self.dependencies == other.dependencies)
+
 
 class Template(object):
-    __slots__ = ('_substitutions', '_template')
+    __slots__ = ('_substitutions', 'template')
 
     def __init__(self):
         self._substitutions = []
-        self._template = None
+        self.template = None
+
+    def serialize(self):
+        return {'template': self.template,
+                'substitutions': [substitution.serialize() for substitution in self._substitutions]}
+
+    @classmethod
+    def deserialize(cls, data):
+        obj = cls()
+        obj.template = data['template']
+        obj._substitutions = [Substitution.deserialize(substitution_data) for substitution_data in data['substitutions']]
+
+        return obj
 
     def parse(self, text, externals):
 
@@ -106,8 +134,12 @@ class Template(object):
             self._substitutions.append(Substitution.parse(variable, externals=externals))
             text = text.replace(variable, '%s', 1)
 
-        self._template = text
+        self.template = text
 
     def substitute(self, externals, dictionary):
         substitutions = [substitution.get_word(externals=externals, dictionary=dictionary) for substitution in self._substitutions]
-        return self._template % tuple(substitutions)
+        return self.template % tuple(substitutions)
+
+    def __eq__(self, other):
+        return (self._substitutions == other._substitutions and
+                self.template == other.template)

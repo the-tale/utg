@@ -16,7 +16,7 @@ class Dictionary(object):
             if form not in self._data:
                 self._data[form] = []
 
-            if all(word is not test_word for test_word, i in self._data[form]):
+            if all(word is not test_word for test_word, j in self._data[form]):
                 self._data[form].append((word, i))
 
 

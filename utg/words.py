@@ -23,6 +23,13 @@ RESTRICTIONS = { r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD, r.GENDE
                  r.PRONOUN_CATEGORY.VAGUE: (r.PERSON,),
                  r.PRONOUN_CATEGORY.MUTUAL: (r.PERSON,) }
 
+INVERTED_RESTRICTIONS = {}
+for property, property_groups in RESTRICTIONS.iteritems():
+    for property_group in property_groups:
+        if property_group not in INVERTED_RESTRICTIONS:
+            INVERTED_RESTRICTIONS[property_group] = set()
+        INVERTED_RESTRICTIONS[property_group].add(property)
+
 _DEFAULT_PROPERTIES = logic.get_default_properties()
 
 WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)
@@ -54,8 +61,18 @@ class Properties(object):
             else:
                 self._data[property._relation] = property
 
-    def get_key(self, *argv):
-        return tuple(self.get(property_group) for property_group in argv)
+    def get_key(self, key, schema=None):
+        if schema is None:
+            schema = key
+
+        value = []
+        for property_group in key:
+            property = self.get(property_group)
+            if property_group in INVERTED_RESTRICTIONS and any(self.get(p._relation) == p for p in INVERTED_RESTRICTIONS[property_group] if p._relation in schema):
+                property = None
+            value.append(property)
+
+        return tuple(value)
 
     def get(self, property_group):
         if property_group in self._data:
@@ -98,10 +115,10 @@ class Word(object):
     def form(self, properties):
         real_properties = properties.clone()
         real_properties.update(self.properties)
-        return self.forms[WORDS_CACHES[self.type][real_properties.get_key(*self.type.schema)]]
+        return self.forms[WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
-        return self.forms[0]
+        return self.form(properties=self.properties)
 
     def __eq__(self, other):
         return (self.type == other.type and
@@ -113,16 +130,16 @@ class Word(object):
         return len(WORDS_CACHES[type])
 
     @classmethod
-    def create_test_word(cls, type):
+    def create_test_word(cls, type, prefix=u'', only_required=False):
         cache = WORDS_CACHES[type]
         forms = [None] * len(cache)
         for key, index in cache.iteritems():
-            forms[index] = u','.join(property.verbose_id for property in key if property is not None)
+            forms[index] = prefix + u','.join(property.verbose_id for property in key if property is not None)
 
         properties = Properties()
 
         for relation, required in type.properties.iteritems():
-            if not required and random.random() > 0.5:
+            if not required and (only_required or random.random() > 0.5):
                 continue
             properties.update(random.choice(relation.records))
 

@@ -99,6 +99,9 @@ class WordTests(TestCase):
         word = words.Word(type=r.WORD_TYPE.VERB, forms=['x1', 'x2', 'x3'], properties=words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
         self.assertEqual(word.serialize(), words.Word.deserialize(word.serialize()).serialize())
 
+    def test_get_forms_number__integer(self):
+        self.assertEqual(words.Word.get_forms_number(r.WORD_TYPE.INTEGER), 1)
+
 
     def test_form(self):
         word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))

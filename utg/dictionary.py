@@ -2,6 +2,7 @@
 
 from utg import words
 from utg import exceptions
+from utg import relations as r
 
 
 class Dictionary(object):
@@ -21,13 +22,21 @@ class Dictionary(object):
 
 
     def get_words(self, text, type=None):
+
+        if isinstance(text, (int, long)):
+            word = words.Word(type=r.WORD_TYPE.INTEGER, forms=[u'%s' % text], properties=words.Properties())
+            return [words.WordForm(word=word, properties=word.properties, form=word.forms[0])]
+
         if text not in self._data:
             return []
 
-        choices = self._data[text]
+        choices = [words.WordForm(word=word,
+                                  properties=words.Properties(*words.INVERTED_WORDS_CACHES[word.type][index]),
+                                  form=text)
+                   for word, index in self._data[text]]
 
         if type:
-            choices = [word for word in choices if word[0].type == type]
+            choices = [word for word in choices if word.word.type == type]
 
         return choices
 
@@ -46,6 +55,4 @@ class Dictionary(object):
         if len(choices) > 1:
             raise exceptions.MoreThenOneWordFoundError(text=text, type=type)
 
-        word, cache_index = choices[0]
-
-        return word, words.Properties(*words.INVERTED_WORDS_CACHES[word.type][cache_index])
+        return choices[0]

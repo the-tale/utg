@@ -89,18 +89,19 @@ class Substitution(object):
         properties = self._merge_properties(externals=externals)
 
         if self.id in externals:
-            word = externals[self.id]
-            word_properties = properties
+            word = externals[self.id].word
         else:
-            word, word_properties = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
-            word_properties.update(properties)
+            word_form = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
+            word_form.properties.update(properties)
+            word = word_form.word
+            properties = word_form.properties
 
-        form = word.form(word_properties)
+        form = word.form(properties)
 
         if properties.get(r.WORD_CASE).is_UPPER:
             form = form[0].upper() + form[1:]
 
-        return form
+        return words.WordForm(word=word, form=form, properties=properties)
 
     def __eq__(self, other):
         return (self.id == other.id and
@@ -126,6 +127,21 @@ class Template(object):
 
         return obj
 
+    def get_undictionaried_words(self, externals, dictionary):
+        words = []
+
+        for substitution in self._substitutions:
+
+            if substitution.id in externals:
+                continue
+
+            if dictionary.has_words(substitution.id):
+                continue
+
+            words.append(substitution.id)
+
+        return words
+
     def parse(self, text, externals):
 
         variables = _VARIABLE_REGEX.findall(text)
@@ -137,7 +153,7 @@ class Template(object):
         self.template = text
 
     def substitute(self, externals, dictionary):
-        substitutions = [substitution.get_word(externals=externals, dictionary=dictionary) for substitution in self._substitutions]
+        substitutions = [substitution.get_word(externals=externals, dictionary=dictionary).form for substitution in self._substitutions]
         return self.template % tuple(substitutions)
 
     def __eq__(self, other):

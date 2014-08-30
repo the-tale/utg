@@ -154,8 +154,28 @@ class TemplateTests(TestCase):
 
         template.parse(TEXT, externals=['external_1', 'external_2'])
 
-        result = template.substitute(externals={'external_1': word_2,
-                                                'external_2': word_3},
+        result = template.substitute(externals={'external_1': words.WordForm(word=word_2, properties=word_2.properties, form=u'X-ед1'),
+                                                'external_2': words.WordForm(word=word_3, properties=word_3.properties, form=u'y-мн5')},
                                     dictionary=dictionary)
 
         self.assertEqual(result, u'X-ед1 1 мн3 2 y-мн5')
+
+    def test_get_undictionaried_words(self):
+        word_1 = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_2 = helpers.create_noun(prefix=u'x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word_3 = helpers.create_noun(prefix=u'y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+
+        dictionary = Dictionary()
+
+        dictionary.add_word(word_1)
+        dictionary.add_word(word_2)
+        dictionary.add_word(word_3)
+
+        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [слово|тв,ед] [бла-бла]'
+
+        template = templates.Template()
+
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        self.assertEqual(template.get_undictionaried_words(externals=['external_1', 'external_2'], dictionary=dictionary),
+                         [u'слово', u'бла-бла'])

@@ -90,6 +90,9 @@ class Properties(object):
     def __unicode__(self):
         return u'(%s)' % (u','.join(property.verbose_id for property in self._data.itervalues()))
 
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
+
     def __eq__(self, other):
         return self._data == other._data
 
@@ -130,7 +133,7 @@ class Word(object):
         return len(WORDS_CACHES[type])
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'', only_required=False):
+    def create_test_word(cls, type, prefix=u'w-', only_required=False):
         cache = WORDS_CACHES[type]
         forms = [None] * len(cache)
         for key, index in cache.iteritems():
@@ -144,3 +147,17 @@ class Word(object):
             properties.update(random.choice(relation.records))
 
         return cls(type=type, forms=forms, properties=properties)
+
+
+class WordForm(object):
+    __slots__ = ('word', 'properties', 'form')
+
+    def __init__(self, word, properties, form):
+        self.word = word
+        self.properties = properties
+        self.form = form
+
+    def __eq__(self, other):
+        return (self.word == other.word and
+                self.properties == other.properties and
+                self.form == other.form)

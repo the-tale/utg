@@ -6,6 +6,7 @@ from unittest import TestCase
 from utg import relations as r
 from utg import logic
 from utg import words
+from utg import data
 
 
 EXPECTED_ORDER = [ r.FORM,
@@ -61,7 +62,7 @@ class GeneralTests(TestCase):
 
 
     def test_restrictions_orders(self):
-        for key, restrictions in words.RESTRICTIONS.iteritems():
+        for key, restrictions in data.RESTRICTIONS.iteritems():
             for restriction in restrictions:
                 self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
 

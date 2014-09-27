@@ -90,7 +90,12 @@ class Substitution(object):
 
         if self.id in externals:
             word = externals[self.id].word
-            properties.update(externals[self.id].properties) # TODO: test that line
+
+            # TODO: test that block
+            new_properties = externals[self.id].properties.clone()
+            new_properties.update(properties)
+            properties = new_properties
+
         else:
             word_form = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
             word_form.properties.update(properties)
@@ -102,7 +107,9 @@ class Substitution(object):
         if properties.get(r.WORD_CASE).is_UPPER:
             form = form[0].upper() + form[1:]
 
-        return words.WordForm(word=word, form=form, properties=properties)
+        form = words.WordForm(word=word, form=form, properties=properties)
+
+        return form
 
     def __eq__(self, other):
         return (self.id == other.id and

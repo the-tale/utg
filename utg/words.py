@@ -3,36 +3,7 @@ import copy
 import random
 
 from utg import relations as r
-from utg import logic
-
-
-RESTRICTIONS = { r.FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD, r.GENDER),
-                 r.NUMBER.PLURAL: (r.GENDER,),
-                 r.TIME.PRESENT: (r.GENDER, r.MOOD),
-                 r.TIME.FUTURE: (r.GENDER,),
-                 r.ADJECTIVE_CATEGORY.RELATIVE: (r.GRADE,),
-                 r.ADJECTIVE_CATEGORY.POSSESSIVE: (r.GRADE,),
-                 r.PERSON.FIRST: (r.GENDER,),
-                 r.PERSON.SECOND: (r.GENDER,),
-                 r.PRONOUN_CATEGORY.REFLEXIVE: (r.NUMBER, r.GENDER, r.PERSON),
-                 r.PRONOUN_CATEGORY.INTERROGATIVE: (r.PERSON,),
-                 r.PRONOUN_CATEGORY.RELATIVE: (r.NUMBER, r.GENDER, r.PERSON),
-                 r.PRONOUN_CATEGORY.DEMONSTRATIVE: (r.PERSON,),
-                 r.PRONOUN_CATEGORY.ATTRIBUTIVE: (r.PERSON,),
-                 r.PRONOUN_CATEGORY.NEGATIVE: (r.PERSON,),
-                 r.PRONOUN_CATEGORY.VAGUE: (r.PERSON,),
-                 r.PRONOUN_CATEGORY.MUTUAL: (r.PERSON,) }
-
-INVERTED_RESTRICTIONS = {}
-for property, property_groups in RESTRICTIONS.iteritems():
-    for property_group in property_groups:
-        if property_group not in INVERTED_RESTRICTIONS:
-            INVERTED_RESTRICTIONS[property_group] = set()
-        INVERTED_RESTRICTIONS[property_group].add(property)
-
-_DEFAULT_PROPERTIES = logic.get_default_properties()
-
-WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)
+from utg import data
 
 
 class Properties(object):
@@ -68,8 +39,18 @@ class Properties(object):
         value = []
         for property_group in key:
             property = self.get(property_group)
-            if property_group in INVERTED_RESTRICTIONS and any(self.get(p._relation) == p for p in INVERTED_RESTRICTIONS[property_group] if p._relation in schema):
-                property = None
+
+            if property_group in data.INVERTED_RESTRICTIONS:
+
+                for p in data.INVERTED_RESTRICTIONS[property_group]:
+
+                    if p._relation not in schema:
+                        continue
+
+                    if self.get(p._relation) == p:
+                        property = None
+                        break
+
             value.append(property)
 
         return tuple(value)
@@ -77,7 +58,7 @@ class Properties(object):
     def get(self, property_group):
         if property_group in self._data:
             return self._data[property_group]
-        return _DEFAULT_PROPERTIES[property_group]
+        return data.DEFAULT_PROPERTIES[property_group]
 
     def is_specified(self, property_group):
         return property_group in self._data
@@ -88,7 +69,9 @@ class Properties(object):
         return obj
 
     def __unicode__(self):
-        return u'(%s)' % (u','.join(property.verbose_id for property in self._data.itervalues()))
+        return u'(%s)' % (u','.join(self._data[property.relation].verbose_id
+                                    for property in r.PROPERTY_TYPE.records
+                                    if property.relation in self._data))
 
     def __str__(self):
         return self.__unicode__().encode('utf-8')
@@ -118,7 +101,8 @@ class Word(object):
     def form(self, properties):
         real_properties = properties.clone()
         real_properties.update(self.properties)
-        return self.forms[WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
+        # print '  ', real_properties.get_key(key=self.type.schema)
+        return self.forms[data.WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
         return self.form(properties=self.properties)
@@ -130,11 +114,11 @@ class Word(object):
 
     @classmethod
     def get_forms_number(cls, type):
-        return len(WORDS_CACHES[type])
+        return len(data.WORDS_CACHES[type])
 
     @classmethod
     def get_keys(cls, type):
-        cache = WORDS_CACHES[type]
+        cache = data.WORDS_CACHES[type]
         keys = [None] * len(cache)
         for key, index in cache.iteritems():
             keys[index] = key

@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from utg import words
+from utg import data
 from utg import exceptions
 from utg import relations as r
 
@@ -41,7 +42,7 @@ class Dictionary(object):
             return []
 
         choices = [words.WordForm(word=word,
-                                  properties=words.Properties(*words.INVERTED_WORDS_CACHES[word.type][index]),
+                                  properties=words.Properties(*data.INVERTED_WORDS_CACHES[word.type][index]),
                                   form=text)
                    for word, index in self._data[text]]
 
@@ -55,6 +56,8 @@ class Dictionary(object):
         return bool(self.get_words(text, type=type))
 
     def is_word_registered(self, type, normal_form):
+        if type.is_INTEGER:
+            return True
         return normal_form in self._index[type]
 
     def get_word(self, text, type=None):

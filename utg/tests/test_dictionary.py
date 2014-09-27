@@ -73,8 +73,8 @@ class DictionaryTests(TestCase):
         properties_1_3 = words.Properties(r.CASE.DATIVE, r.NUMBER.SINGULAR)
 
         properties_2_1 = words.Properties(r.FORM.INFINITIVE)
-        properties_2_2 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.PERSON.FIRST, r.MOOD.INDICATIVE, r.FORM.NORMAL)
-        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.PERSON.FIRST, r.MOOD.CONDITIONAL, r.FORM.NORMAL)
+        properties_2_2 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.MASCULINE, r.MOOD.INDICATIVE, r.FORM.NORMAL)
+        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.MASCULINE, r.MOOD.CONDITIONAL, r.FORM.NORMAL)
 
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
@@ -108,8 +108,8 @@ class DictionaryTests(TestCase):
         properties_1_3 = words.Properties(r.CASE.DATIVE, r.NUMBER.SINGULAR)
 
         properties_2_1 = words.Properties(r.FORM.INFINITIVE)
-        properties_2_2 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.PERSON.FIRST, r.MOOD.INDICATIVE, r.FORM.NORMAL)
-        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.PERSON.FIRST, r.MOOD.CONDITIONAL, r.FORM.NORMAL)
+        properties_2_2 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.MASCULINE, r.MOOD.INDICATIVE, r.FORM.NORMAL)
+        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.MASCULINE, r.MOOD.CONDITIONAL, r.FORM.NORMAL)
 
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
@@ -211,4 +211,4 @@ class DictionaryTests(TestCase):
                          words.WordForm(word=word_1, properties=words.Properties(r.CASE.GENITIVE, r.NUMBER.SINGULAR), form='x2'))
 
         self.assertEqual(self.dictionary.get_word('x2', type=r.WORD_TYPE.VERB),
-                         words.WordForm(word=word_2, properties=words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.PERSON.FIRST, r.MOOD.INDICATIVE), form='x2'))
+                         words.WordForm(word=word_2, properties=words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.GENDER.MASCULINE, r.MOOD.INDICATIVE), form='x2'))

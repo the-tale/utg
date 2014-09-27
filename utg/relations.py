@@ -87,8 +87,9 @@ class WORD_TYPE(WORD_PROPERTY):
                 ('ADJECTIVE', 1, u'прилагательное', u'прил', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', ( NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
                 ('VERB', 3, u'глагол', u'гл', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}),
-                ('INTEGER', 5, u'целое число', u'целое', (), {}) )
+                ('PARTICIPLE', 4, u'причастие', u'прич', (TIME, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}),
+                ('INTEGER', 5, u'целое число', u'целое', (), {},),
+                ('TEXT', 6, u'текст', u'текст', (), {},) )
 
 
 class PROPERTY_TYPE(EnumWithText):

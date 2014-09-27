@@ -6,13 +6,23 @@ from utg import relations as r
 
 
 class Dictionary(object):
-    __slots__ = ('_data', )
+    __slots__ = ('_data', '_index')
 
-    def __init__(self):
+    def __init__(self, words=[]):
         self._data = {}
+        self._index = {word_type: {} for word_type in r.WORD_TYPE.records}
+
+        for word in words:
+            self.add_word(word)
 
 
     def add_word(self, word):
+        normal_form = word.normal_form()
+        if normal_form in self._index[word.type]:
+            raise exceptions.DuplicateWordError(type=word.type, normal_form=normal_form)
+
+        self._index[word.type][normal_form] = word
+
         for i, form in enumerate(word.forms):
             if form not in self._data:
                 self._data[form] = []
@@ -44,6 +54,8 @@ class Dictionary(object):
     def has_words(self, text, type=None):
         return bool(self.get_words(text, type=type))
 
+    def is_word_registered(self, type, normal_form):
+        return normal_form in self._index[type]
 
     def get_word(self, text, type=None):
 
@@ -56,3 +68,8 @@ class Dictionary(object):
             raise exceptions.MoreThenOneWordFoundError(text=text, type=type)
 
         return choices[0]
+
+    def iterwords(self):
+        for type in r.WORD_TYPE.records:
+            for word in self._index[type].itervalues():
+                yield word

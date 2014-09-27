@@ -13,6 +13,9 @@ class WordsError(UtgError):
     pass
 
 
+class DuplicateWordError(WordsError):
+    MSG = u'duplicate word in dictionary, type: %(type)s, normal form: %(normal_form)s'
+
 class UnknownVerboseIdError(WordsError):
     MSG = u'Unknown verbose id: %(verbose_id)s'
 

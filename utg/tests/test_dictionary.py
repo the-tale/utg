@@ -28,6 +28,17 @@ class DictionaryTests(TestCase):
                           'x2': [(word, 1)],
                           'x3': [(word, 2)]})
 
+    def test_add_word__duplicate_normal_form(self):
+        word = words.Word(type=r.WORD_TYPE.NOUN, forms=['x1', 'x2', 'x3'], properties=words.Properties())
+        self.dictionary.add_word(word)
+
+        word = words.Word(type=r.WORD_TYPE.NOUN, forms=['x1', 'y2', 'y3'], properties=words.Properties())
+        self.assertRaises(exceptions.DuplicateWordError, self.dictionary.add_word, word)
+
+        self.assertTrue(self.dictionary.is_word_registered(r.WORD_TYPE.NOUN, 'x1'))
+        self.assertFalse(self.dictionary.is_word_registered(r.WORD_TYPE.NOUN, 'x2'))
+        self.assertFalse(self.dictionary.is_word_registered(r.WORD_TYPE.VERB, 'x1'))
+
 
     def test_add_word__duplicates_in_one_word(self):
         word = words.Word(type=r.WORD_TYPE.NOUN, forms=['x1', 'x2', 'x1'], properties=words.Properties())

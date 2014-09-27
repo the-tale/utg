@@ -133,11 +133,21 @@ class Word(object):
         return len(WORDS_CACHES[type])
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', only_required=False):
+    def get_keys(cls, type):
         cache = WORDS_CACHES[type]
-        forms = [None] * len(cache)
+        keys = [None] * len(cache)
         for key, index in cache.iteritems():
-            forms[index] = prefix + u','.join(property.verbose_id for property in key if property is not None)
+            keys[index] = key
+        return keys
+
+
+    @classmethod
+    def create_test_word(cls, type, prefix=u'w-', only_required=False):
+        keys = cls.get_keys(type)
+
+        forms = []
+        for key in keys:
+            forms.append(prefix + u','.join(property.verbose_id for property in key if property is not None))
 
         properties = Properties()
 
@@ -156,6 +166,10 @@ class WordForm(object):
         self.word = word
         self.properties = properties
         self.form = form
+
+        # properties must contain ALL valuable data
+        # base word properties must redefine any other properties
+        self.properties.update(word.properties) # TODO: test that line
 
     def __eq__(self, other):
         return (self.word == other.word and

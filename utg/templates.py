@@ -2,14 +2,14 @@
 
 import re
 
-from utg import logic
 from utg import exceptions
 from utg import words
 from utg import relations as r
+from utg import data
 
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
-_VERBOSE_TO_PROPERTIES = logic.get_verbose_to_relations()
+
 
 
 class Substitution(object):
@@ -61,10 +61,10 @@ class Substitution(object):
             if not slug:
                 continue
 
-            if slug not in _VERBOSE_TO_PROPERTIES:
+            if slug not in data.VERBOSE_TO_PROPERTIES:
                 raise exceptions.UnknownVerboseIdError(verbose_id=slug)
 
-            properties.update(_VERBOSE_TO_PROPERTIES[slug])
+            properties.update(data.VERBOSE_TO_PROPERTIES[slug])
 
         return properties
 
@@ -90,6 +90,7 @@ class Substitution(object):
 
         if self.id in externals:
             word = externals[self.id].word
+            properties.update(externals[self.id].properties) # TODO: test that line
         else:
             word_form = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
             word_form.properties.update(properties)

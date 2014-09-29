@@ -27,6 +27,7 @@ class LogicTests(TestCase):
                           r.NUMBER.SINGULAR,
                           r.ASPECT.IMPERFECTIVE,
                           r.MOOD.INDICATIVE,
+                          r.INTEGER_FORM.SINGULAR,
                           None])
 
         self.assertEqual(set(logic.get_default_properties().values()),
@@ -104,12 +105,10 @@ class LogicTests(TestCase):
         self.assertEqual(set(inverted_caches.keys()), set(r.WORD_TYPE.records))
 
     def test_get_caches(self):
-        caches, inverted_caches = logic.get_caches(restrictions={})
-
-        cache = caches[r.WORD_TYPE.NOUN]
-        inverted_cache = inverted_caches[r.WORD_TYPE.NOUN]
+        cache, inverted_cache = logic._get_caches(schema=(r.NUMBER, r.CASE), restrictions={})
 
         self.assertEqual(len(cache), 12)
+
         self.assertEqual(cache,
                          { (r.NUMBER.SINGULAR, r.CASE.NOMINATIVE): 0,
                            (r.NUMBER.SINGULAR, r.CASE.GENITIVE): 1,
@@ -138,10 +137,7 @@ class LogicTests(TestCase):
                            (r.NUMBER.PLURAL, r.CASE.PREPOSITIONAL) ] )
 
     def test_get_caches__with_restrictions(self):
-        caches, inverted_caches = logic.get_caches(restrictions={r.NUMBER.PLURAL: [r.CASE]})
-
-        cache = caches[r.WORD_TYPE.NOUN]
-        inverted_cache = inverted_caches[r.WORD_TYPE.NOUN]
+        cache, inverted_cache = logic._get_caches(schema=(r.NUMBER, r.CASE), restrictions={r.NUMBER.PLURAL: [r.CASE]})
 
         self.assertEqual(len(cache), 7)
         self.assertEqual(cache,

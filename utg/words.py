@@ -1,5 +1,4 @@
 # coding: utf-8
-import copy
 import random
 
 from utg import relations as r
@@ -11,7 +10,7 @@ class Properties(object):
 
     def __init__(self, *argv):
         self._data = {}
-        self.update(*argv)
+        self._update(*argv)
 
     def serialize(self):
         return {r.PROPERTY_TYPE.index_relation[property_type].value: property.value
@@ -22,7 +21,7 @@ class Properties(object):
         return cls(*[r.PROPERTY_TYPE(int(property_type)).relation(property_value)
                      for property_type, property_value in data.iteritems()])
 
-    def update(self, *argv):
+    def _update(self, *argv):
         for property in argv:
             if property is None:
                 continue
@@ -63,10 +62,8 @@ class Properties(object):
     def is_specified(self, property_group):
         return property_group in self._data
 
-    def clone(self):
-        obj = self.__class__()
-        obj._data = copy.copy(self._data)
-        return obj
+    def clone(self, *argv):
+        return self.__class__(self, *argv)
 
     def __unicode__(self):
         return u'(%s)' % (u','.join(self._data[property.relation].verbose_id
@@ -99,9 +96,7 @@ class Word(object):
                    properties=Properties.deserialize(data['properties']))
 
     def form(self, properties):
-        real_properties = properties.clone()
-        real_properties.update(self.properties)
-        # print '  ', real_properties.get_key(key=self.type.schema)
+        real_properties = Properties(properties, self.properties)
         return self.forms[data.WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
@@ -114,7 +109,7 @@ class Word(object):
 
     @classmethod
     def get_forms_number(cls, type):
-        return len(data.WORDS_CACHES[type])
+        return len(data.WORDS_CACHES.get(type, []))
 
     @classmethod
     def get_keys(cls, type):
@@ -126,36 +121,47 @@ class Word(object):
 
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', only_required=False):
+    def create_test_word(cls, type, prefix=u'w-', only_required=False, properties=None):
         keys = cls.get_keys(type)
 
         forms = []
         for key in keys:
             forms.append(prefix + u','.join(property.verbose_id for property in key if property is not None))
 
-        properties = Properties()
+        if properties is None:
+            properties = Properties()
 
-        for relation, required in type.properties.iteritems():
+        for property_type in r.PROPERTY_TYPE.records:
+            if property_type not in type.properties:
+                continue
+
+            required = type.properties[property_type]
+
             if not required and (only_required or random.random() > 0.5):
                 continue
-            properties.update(random.choice(relation.records))
+
+            properties.update(random.choice(property_type.records))
 
         return cls(type=type, forms=forms, properties=properties)
 
 
 class WordForm(object):
-    __slots__ = ('word', 'properties', 'form')
+    __slots__ = ('word', 'properties', 'form_properties')
 
-    def __init__(self, word, properties, form):
+    def __init__(self, word, properties, form_properties=None):
         self.word = word
-        self.properties = properties
-        self.form = form
+        self.properties = Properties(properties, word.properties)
+        self.form_properties = Properties(form_properties, word.properties) if form_properties is not None else self.properties
 
-        # properties must contain ALL valuable data
-        # base word properties must redefine any other properties
-        self.properties.update(word.properties) # TODO: test that line
+    @property
+    def form(self):
+        form = self.word.form(self.properties)
+
+        if self.properties.get(r.WORD_CASE).is_UPPER:
+            form = form[0].upper() + form[1:]
+
+        return form
 
     def __eq__(self, other):
         return (self.word == other.word and
-                self.properties == other.properties and
-                self.form == other.form)
+                self.properties == other.properties)

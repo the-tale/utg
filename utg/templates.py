@@ -4,8 +4,8 @@ import re
 
 from utg import exceptions
 from utg import words
-from utg import relations as r
 from utg import data
+from utg import transformators
 
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
@@ -54,7 +54,7 @@ class Substitution(object):
 
     @classmethod
     def parse_properties(cls, text):
-        properties = words.Properties()
+        properties = []
         for slug in text.split(','):
             slug.strip()
 
@@ -64,52 +64,50 @@ class Substitution(object):
             if slug not in data.VERBOSE_TO_PROPERTIES:
                 raise exceptions.UnknownVerboseIdError(verbose_id=slug)
 
-            properties.update(data.VERBOSE_TO_PROPERTIES[slug])
+            properties.append(data.VERBOSE_TO_PROPERTIES[slug])
 
-        return properties
+        return words.Properties(*properties)
 
 
-    def _merge_properties(self, externals):
-        properties = words.Properties()
+    def _list_propeties(self, externals):
+        properties = []
+        external_words = []
 
         for dependency in self.dependencies:
             if isinstance(dependency, words.Properties):
-                properties.update(dependency)
+                properties.append(dependency)
                 continue
 
             if dependency not in externals:
                 raise exceptions.ExternalDependecyNotFoundError(dependency=dependency)
 
-            properties.update(externals[dependency].properties)
+            properties.append(externals[dependency].properties)
+            external_words.append(externals[dependency])
 
-        return properties
+        return properties, external_words
 
 
-    def get_word(self, externals, dictionary):
-        properties = self._merge_properties(externals=externals)
+    def get_text(self, externals, dictionary):
 
         if self.id in externals:
-            word = externals[self.id].word
-
-            # TODO: test that block
-            new_properties = externals[self.id].properties.clone()
-            new_properties.update(properties)
-            properties = new_properties
-
+            base_word = externals[self.id]
         else:
-            word_form = dictionary.get_word(self.id, type=properties.get(r.WORD_TYPE))
-            word_form.properties.update(properties)
-            word = word_form.word
-            properties = word_form.properties
+            # TODO: get_word must use type information if substitution has it
+            base_word = dictionary.get_word(self.id)
 
-        form = word.form(properties)
+        properties_list, externals = self._list_propeties(externals=externals)
 
-        if properties.get(r.WORD_CASE).is_UPPER:
-            form = form[0].upper() + form[1:]
+        properties = base_word.properties.clone(*properties_list)
 
-        form = words.WordForm(word=word, form=form, properties=properties)
+        form_properties = properties
+        for external in externals:
+            form_properties = transformators.transform(slave_type=base_word.word.type,
+                                                       slave_propeties=form_properties,
+                                                       master_type=external.word)
 
-        return form
+        word_form = words.WordForm(word=base_word.word, properties=properties, form_properties=form_properties)
+
+        return word_form.form
 
     def __eq__(self, other):
         return (self.id == other.id and
@@ -161,7 +159,7 @@ class Template(object):
         self.template = text
 
     def substitute(self, externals, dictionary):
-        substitutions = [substitution.get_word(externals=externals, dictionary=dictionary).form for substitution in self._substitutions]
+        substitutions = [substitution.get_text(externals=externals, dictionary=dictionary) for substitution in self._substitutions]
         return self.template % tuple(substitutions)
 
     def __eq__(self, other):

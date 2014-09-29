@@ -38,3 +38,10 @@ class MoreThenOneWordFoundError(WordsError):
 
 class UnknownLexiconKeyError(WordsError):
     MSG = u'unknown lexicon key: %(key)s'
+
+
+class TransformatorsError(UtgError):
+    pass
+
+class UnknownIntegerFormError(TransformatorsError):
+    MSG = u'unknown integer form: %(form)s'

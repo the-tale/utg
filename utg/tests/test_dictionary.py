@@ -80,23 +80,23 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_2)
 
         self.assertEqual(self.dictionary.get_words('z'), [])
-        self.assertEqual(self.dictionary.get_words('x1'), [words.WordForm(word=word_1, properties=properties_1_1, form='x1')])
-        self.assertEqual(self.dictionary.get_words('x2'), [words.WordForm(word=word_1, properties=properties_1_2, form='x2'),
-                                                           words.WordForm(word=word_2, properties=properties_2_2, form='x2')])
-        self.assertEqual(self.dictionary.get_words('x3'), [words.WordForm(word=word_1, properties=properties_1_3, form='x3')])
-        self.assertEqual(self.dictionary.get_words('y1'), [words.WordForm(word=word_2, properties=properties_2_1, form='y1')])
-        self.assertEqual(self.dictionary.get_words('y3'), [words.WordForm(word=word_2, properties=properties_2_3, form='y3')])
+        self.assertEqual(self.dictionary.get_words('x1'), [words.WordForm(word=word_1, properties=properties_1_1)])
+        self.assertEqual(self.dictionary.get_words('x2'), [words.WordForm(word=word_1, properties=properties_1_2),
+                                                           words.WordForm(word=word_2, properties=properties_2_2)])
+        self.assertEqual(self.dictionary.get_words('x3'), [words.WordForm(word=word_1, properties=properties_1_3)])
+        self.assertEqual(self.dictionary.get_words('y1'), [words.WordForm(word=word_2, properties=properties_2_1)])
+        self.assertEqual(self.dictionary.get_words('y3'), [words.WordForm(word=word_2, properties=properties_2_3)])
 
 
     def test_get_words__integer(self):
-        word_1 = words.Word(type=r.WORD_TYPE.INTEGER, forms=['13'], properties=words.Properties())
-        word_2 = words.Word(type=r.WORD_TYPE.INTEGER, forms=['666'], properties=words.Properties())
-        word_3 = words.Word(type=r.WORD_TYPE.INTEGER, forms=['-7'], properties=words.Properties())
-
         self.assertEqual(self.dictionary.get_words('13'), [])
-        self.assertEqual(self.dictionary.get_words(13), [words.WordForm(word=word_1, properties=word_1.properties, form='13')])
-        self.assertEqual(self.dictionary.get_words(666), [words.WordForm(word=word_2, properties=word_2.properties, form='666')])
-        self.assertEqual(self.dictionary.get_words(-7), [words.WordForm(word=word_3, properties=word_3.properties, form='-7')])
+
+        word = words.Word(type=r.WORD_TYPE.INTEGER,
+                          forms=['666'],
+                          properties=words.Properties(r.NUMBER.PLURAL, r.INTEGER_FORM.PLURAL))
+
+        self.assertEqual(self.dictionary.get_words(666),
+                         [words.WordForm(word=word, properties=word.properties)])
 
 
     def test_get_words__filter_by_type(self):
@@ -116,18 +116,18 @@ class DictionaryTests(TestCase):
 
         self.assertEqual(self.dictionary.get_words('z', type=r.WORD_TYPE.NOUN), [])
 
-        self.assertEqual(self.dictionary.get_words('x1', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_1, form='x1')])
-        self.assertEqual(self.dictionary.get_words('x2', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_2, form='x2')])
-        self.assertEqual(self.dictionary.get_words('x3', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_3, form='x3')])
+        self.assertEqual(self.dictionary.get_words('x1', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_1)])
+        self.assertEqual(self.dictionary.get_words('x2', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_2)])
+        self.assertEqual(self.dictionary.get_words('x3', type=r.WORD_TYPE.NOUN), [words.WordForm(word=word_1, properties=properties_1_3)])
         self.assertEqual(self.dictionary.get_words('y1', type=r.WORD_TYPE.NOUN), [])
         self.assertEqual(self.dictionary.get_words('y3', type=r.WORD_TYPE.NOUN), [])
 
         self.assertEqual(self.dictionary.get_words('z', type=r.WORD_TYPE.VERB), [])
         self.assertEqual(self.dictionary.get_words('x1', type=r.WORD_TYPE.VERB), [])
-        self.assertEqual(self.dictionary.get_words('x2', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_2, form='x2')])
+        self.assertEqual(self.dictionary.get_words('x2', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_2)])
         self.assertEqual(self.dictionary.get_words('x3', type=r.WORD_TYPE.VERB), [])
-        self.assertEqual(self.dictionary.get_words('y1', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_1, form='y1')])
-        self.assertEqual(self.dictionary.get_words('y3', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_3, form='y3')])
+        self.assertEqual(self.dictionary.get_words('y1', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_1)])
+        self.assertEqual(self.dictionary.get_words('y3', type=r.WORD_TYPE.VERB), [words.WordForm(word=word_2, properties=properties_2_3)])
 
 
     def test_has_words(self):
@@ -196,8 +196,8 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
 
-        self.assertEqual(self.dictionary.get_word('x1'), words.WordForm(word=word_1, properties=words.Properties(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR), form='x1'))
-        self.assertEqual(self.dictionary.get_word('y1'), words.WordForm(word=word_2, properties=words.Properties(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR), form='y1'))
+        self.assertEqual(self.dictionary.get_word('x1'), words.WordForm(word=word_1, properties=words.Properties(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)))
+        self.assertEqual(self.dictionary.get_word('y1'), words.WordForm(word=word_2, properties=words.Properties(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)))
 
 
     def test_get_word__filter_by_type(self):
@@ -208,7 +208,7 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_2)
 
         self.assertEqual(self.dictionary.get_word('x2', type=r.WORD_TYPE.NOUN),
-                         words.WordForm(word=word_1, properties=words.Properties(r.CASE.GENITIVE, r.NUMBER.SINGULAR), form='x2'))
+                         words.WordForm(word=word_1, properties=words.Properties(r.CASE.GENITIVE, r.NUMBER.SINGULAR)))
 
         self.assertEqual(self.dictionary.get_word('x2', type=r.WORD_TYPE.VERB),
-                         words.WordForm(word=word_2, properties=words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.GENDER.MASCULINE, r.MOOD.INDICATIVE), form='x2'))
+                         words.WordForm(word=word_2, properties=words.Properties(r.NUMBER.SINGULAR, r.FORM.NORMAL, r.TIME.PAST, r.GENDER.MASCULINE, r.MOOD.INDICATIVE)))

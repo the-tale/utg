@@ -5,7 +5,6 @@ from unittest import TestCase
 
 from utg import relations as r
 from utg import logic
-from utg import words
 from utg import data
 
 
@@ -24,6 +23,8 @@ EXPECTED_ORDER = [ r.FORM,
                    r.GRADE,
                    r.MOOD,
 
+                   r.INTEGER_FORM,
+
                    r.WORD_CASE,
 
                    r.WORD_TYPE]
@@ -37,20 +38,7 @@ class GeneralTests(TestCase):
 
     def test__properties_list(self):
         self.assertEqual(set(logic.get_property_relations()),
-                         set([ r.CASE,
-                               r.ANIMALITY,
-                               r.NUMBER,
-                               r.GENDER,
-                               r.FORM,
-                               r.TIME,
-                               r.PERSON,
-                               r.ASPECT,
-                               r.MOOD,
-                               r.ADJECTIVE_CATEGORY,
-                               r.GRADE,
-                               r.PRONOUN_CATEGORY,
-                               r.WORD_CASE,
-                               r.WORD_TYPE]))
+                         set(EXPECTED_ORDER))
 
     def test_scheme_orders(self):
         self.assertEqual(set(logic.get_property_relations()), set(EXPECTED_ORDER))

@@ -7,7 +7,6 @@ from utg import templates
 from utg import exceptions
 from utg import relations as r
 from utg.dictionary import Dictionary
-from utg.tests import helpers
 
 
 class SubstitutionTests(TestCase):
@@ -60,36 +59,39 @@ class SubstitutionTests(TestCase):
 
     def test_merge_properties__no_dependencies(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla]', externals=[])
-        self.assertEqual(substitution._merge_properties(externals={}), words.Properties())
+        self.assertEqual(substitution._list_propeties(externals={}), ([], []))
 
     def test_merge_properties__external_not_in_externals(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|external]', externals=['external'])
-        self.assertRaises(exceptions.ExternalDependecyNotFoundError, substitution._merge_properties, externals={})
+        self.assertRaises(exceptions.ExternalDependecyNotFoundError, substitution._list_propeties, externals={})
 
     def test_merge_properties__properties(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|дт,сравн]', externals=[])
-        self.assertEqual(substitution._merge_properties(externals={}), words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
+        self.assertEqual(substitution._list_propeties(externals={}), ([words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE)], []))
 
     def test_merge_properties__externals(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|external]', externals=['external'])
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
-        self.assertEqual(substitution._merge_properties(externals={'external': word}), words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN,
+                                           prefix='w-',
+                                           properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
+        self.assertEqual(substitution._list_propeties(externals={'external': word}), ([words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE)], [word]))
 
     def test_merge_properties__complex__properties_last(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|external|вн,буд]', externals=['external'])
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
-        self.assertEqual(substitution._merge_properties(externals={'external': word}), words.Properties(r.CASE.ACCUSATIVE, r.GRADE.COMPARATIVE, r.TIME.FUTURE))
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN,
+                                           prefix='w-',
+                                           properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
+
+        self.assertEqual(substitution._list_propeties(externals={'external': word}),
+                         ([word.properties, words.Properties(r.CASE.ACCUSATIVE, r.TIME.FUTURE)], [word]))
 
     def test_merge_properties__complex__external_last(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|вн,буд|external]', externals=['external'])
-        word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=helpers.TestForms.NOUN,
-                          properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
-        self.assertEqual(substitution._merge_properties(externals={'external': word}), words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE, r.TIME.FUTURE))
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN,
+                                           prefix='w-',
+                                           properties=words.Properties(r.CASE.DATIVE, r.GRADE.COMPARATIVE))
+        self.assertEqual(substitution._list_propeties(externals={'external': word}),
+                         ([words.Properties(r.CASE.ACCUSATIVE, r.TIME.FUTURE), word.properties], [word]))
 
 
 
@@ -138,11 +140,13 @@ class TemplateTests(TestCase):
 
 
     def test_substitute(self):
-        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [external_2|тв,ед]'
+        TEXT = u'[external_1|загл] 1 [w-ед,тв|external_2|буд] 2 [external_2|тв,ед]'
 
-        word_1 = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
-        word_2 = helpers.create_noun(prefix=u'x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
-        word_3 = helpers.create_noun(prefix=u'y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        # TEXT = u'[external_2|тв,ед]'
+
+        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_2 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word_3 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
         dictionary = Dictionary()
 
@@ -154,16 +158,16 @@ class TemplateTests(TestCase):
 
         template.parse(TEXT, externals=['external_1', 'external_2'])
 
-        result = template.substitute(externals={'external_1': words.WordForm(word=word_2, properties=word_2.properties, form=u'X-ед1'),
-                                                'external_2': words.WordForm(word=word_3, properties=word_3.properties, form=u'y-мн5')},
+        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-ед,им'),
+                                                'external_2': dictionary.get_word(u'y-мн,им'),},
                                     dictionary=dictionary)
 
-        self.assertEqual(result, u'X-ед1 1 мн3 2 y-мн5')
+        self.assertEqual(result, u'X-ед,им 1 w-мн,им 2 y-мн,тв')
 
     def test_get_undictionaried_words(self):
-        word_1 = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
-        word_2 = helpers.create_noun(prefix=u'x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
-        word_3 = helpers.create_noun(prefix=u'y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_2 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word_3 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
         dictionary = Dictionary()
 
@@ -171,7 +175,7 @@ class TemplateTests(TestCase):
         dictionary.add_word(word_2)
         dictionary.add_word(word_3)
 
-        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2 [слово|тв,ед] [бла-бла]'
+        TEXT = u'[external_1|загл] 1 [x-ед,тв|external_2|буд] 2 [слово|тв,ед] [бла-бла]'
 
         template = templates.Template()
 

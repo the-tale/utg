@@ -6,7 +6,6 @@ from unittest import TestCase
 from utg import words
 from utg import logic
 from utg import relations as r
-from utg.tests import helpers
 
 
 class PropertiesTests(TestCase):
@@ -34,13 +33,13 @@ class PropertiesTests(TestCase):
 
         old_data = copy.copy(properties._data)
 
-        properties.update()
+        properties._update()
 
         self.assertEqual(old_data, properties._data)
 
     def test_update(self):
         properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
-        properties.update(r.NUMBER.SINGULAR, r.TIME.FUTURE)
+        properties._update(r.NUMBER.SINGULAR, r.TIME.FUTURE)
 
         self.assertTrue(properties._data[r.CASE].is_DATIVE)
         self.assertTrue(properties._data[r.NUMBER].is_SINGULAR)
@@ -73,14 +72,13 @@ class PropertiesTests(TestCase):
     def test_eq(self):
         properties_1 = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
 
-        properties_2 = words.Properties()
-        properties_2.update(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
+        properties_2 = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)
 
         self.assertEqual(properties_1, properties_2)
 
-        properties_2.update(r.NUMBER.SINGULAR)
+        properties_3 = words.Properties(properties_2, r.NUMBER.SINGULAR)
 
-        self.assertNotEqual(properties_1, properties_2)
+        self.assertNotEqual(properties_1, properties_3)
 
 
 
@@ -104,31 +102,30 @@ class WordTests(TestCase):
 
 
     def test_form(self):
-        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'ед3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'мн3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'ед3')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-ед,дт')
 
 
     def test_form__optional_property(self):
-        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'мн3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'мн3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'мн3')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-мн,дт')
 
-        word = helpers.create_noun(properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
+        word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'ед3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'ед3')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'ед3')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-ед,дт')
 
     def test_normal_form(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
         self.assertEqual(word.normal_form(), word.forms[0])
 
     def test_normal_form__fixed_properties(self):
-        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
-        word.properties.update(r.NUMBER.PLURAL)
-        self.assertEqual(word.normal_form(), word.forms[6])
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True, properties=words.Properties(r.NUMBER.PLURAL))
+        self.assertEqual(word.normal_form(), u'w-мн,им')

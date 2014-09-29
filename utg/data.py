@@ -28,6 +28,8 @@ for property, property_groups in RESTRICTIONS.iteritems():
             INVERTED_RESTRICTIONS[property_group] = set()
         INVERTED_RESTRICTIONS[property_group].add(property)
 
+
 DEFAULT_PROPERTIES = logic.get_default_properties()
+
 
 WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)

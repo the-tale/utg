@@ -74,6 +74,14 @@ class PRONOUN_CATEGORY(WORD_PROPERTY):
                 ('VAGUE', 8, u'неопределённое', u'неопр'),
                 ('MUTUAL', 9, u'взаимное', u'взаимн')  )
 
+
+class INTEGER_FORM(WORD_PROPERTY):
+    records = ( ('SINGULAR', 0, u'один', u'цо'),
+                ('DUAL', 1, u'дуальные 2, 3, 4', u'цд'),
+                ('COMPOSITE_DUAL', 2, u'составные дуальные на 2, 3, 4', u'цсд'),
+                ('PLURAL', 3, u'остальные целые', u'цост'),
+                ('MIL_BIL', 4, u'миллион и миллиард', u'цмм'), )
+
 class WORD_CASE(WORD_PROPERTY):
     records = ( ('LOWER', 0, u'строчная', u'строч'),
                 ('UPPER', 1, u'заглавная', u'загл') )
@@ -88,7 +96,7 @@ class WORD_TYPE(WORD_PROPERTY):
                 ('PRONOUN', 2, u'местоимение', u'мест', ( NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
                 ('VERB', 3, u'глагол', u'гл', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
                 ('PARTICIPLE', 4, u'причастие', u'прич', (TIME, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}),
-                ('INTEGER', 5, u'целое число', u'целое', (), {},),
+                ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', (), {},) )
 
 
@@ -108,7 +116,8 @@ class PROPERTY_TYPE(EnumWithText):
                 ('GRADE', 10, u'степень прилагательного', GRADE),
                 ('PRONOUN_CATEGORY', 11, u'категория местоимения', PRONOUN_CATEGORY),
                 ('WORD_CASE', 12, u'размер 1-ой буквы', WORD_CASE),
-                ('WORD_TYPE', 13, u'часть речи', WORD_TYPE) )
+                ('WORD_TYPE', 13, u'часть речи', WORD_TYPE),
+                ('INTEGER_FORM', 14, u'виды целых чисел', INTEGER_FORM))
 
 # имя числительное;
 # наречие;

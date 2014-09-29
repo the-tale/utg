@@ -3,6 +3,7 @@
 from utg import words
 from utg import data
 from utg import exceptions
+from utg import constructors
 from utg import relations as r
 
 
@@ -35,15 +36,14 @@ class Dictionary(object):
     def get_words(self, text, type=None):
 
         if isinstance(text, (int, long)):
-            word = words.Word(type=r.WORD_TYPE.INTEGER, forms=[u'%s' % text], properties=words.Properties())
-            return [words.WordForm(word=word, properties=word.properties, form=word.forms[0])]
+            word = constructors.construct_integer(text)
+            return [words.WordForm(word=word, properties=word.properties)]
 
         if text not in self._data:
             return []
 
         choices = [words.WordForm(word=word,
-                                  properties=words.Properties(*data.INVERTED_WORDS_CACHES[word.type][index]),
-                                  form=text)
+                                  properties=words.Properties(*data.INVERTED_WORDS_CACHES[word.type][index]))
                    for word, index in self._data[text]]
 
         if type:

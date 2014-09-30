@@ -1,5 +1,6 @@
 # coding: utf-8
 import copy
+import random
 
 from unittest import TestCase
 
@@ -94,7 +95,13 @@ class WordTests(TestCase):
         self.assertEqual(word.properties, words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
 
     def test_serialization(self):
-        word = words.Word(type=r.WORD_TYPE.VERB, forms=['x1', 'x2', 'x3'], properties=words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
+        patch = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+                          forms=['y1', 'y2', 'y3'],
+                          properties=words.Properties(r.CASE.ACCUSATIVE,) )
+        word = words.Word(type=r.WORD_TYPE.NOUN,
+                          forms=['x1', 'x2', 'x3'],
+                          properties=words.Properties(r.CASE.DATIVE, r.TIME.FUTURE),
+                          patches={r.WORD_TYPE.NOUN_COUNTABLE_FORM: patch})
         self.assertEqual(word.serialize(), words.Word.deserialize(word.serialize()).serialize())
 
     def test_get_forms_number__integer(self):
@@ -129,3 +136,32 @@ class WordTests(TestCase):
     def test_normal_form__fixed_properties(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True, properties=words.Properties(r.NUMBER.PLURAL))
         self.assertEqual(word.normal_form(), u'w-мн,им')
+
+    def test_patch(self):
+        patch = words.Word.create_test_word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+                                            prefix='p-')
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN,
+                                           prefix='w-',
+                                           patches={r.WORD_TYPE.NOUN_COUNTABLE_FORM: patch})
+
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.SINGULAR)), u'w-ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, random.choice(r.INTEGER_FORM.records))), u'p-дт')
+
+
+class WordFormTests(TestCase):
+
+    def setUp(self):
+        super(WordFormTests, self).setUp()
+        self.word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
+
+    def test_init__simple(self):
+        form = words.WordForm(word=self.word, properties=words.Properties(r.NUMBER.PLURAL))
+        self.assertEqual(form.properties, words.Properties(r.NUMBER.PLURAL))
+        self.assertEqual(form.form_properties, words.Properties(r.NUMBER.PLURAL))
+
+    def test_form(self):
+        form = words.WordForm(word=self.word,
+                              properties=words.Properties(r.NUMBER.PLURAL),
+                              form_properties=words.Properties(r.NUMBER.PLURAL, r.CASE.DATIVE),)
+        self.assertEqual(form.form, u'w-мн,дт')

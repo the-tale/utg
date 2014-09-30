@@ -78,25 +78,36 @@ class Properties(object):
 
 
 class Word(object):
+    __slots__ = ('type', 'forms', 'properties', 'patches')
 
-    def __init__(self, type, forms, properties):
+    def __init__(self, type, forms, properties, patches=None):
         self.type = type
         self.forms = forms
         self.properties = properties
+        self.patches = {} if patches is None else patches
 
     def serialize(self):
         return {'type': self.type.value,
                 'forms': self.forms,
-                'properties': self.properties.serialize()}
+                'properties': self.properties.serialize(),
+                'patches': {key.value: patch.serialize() for key, patch in self.patches.iteritems()}}
 
     @classmethod
     def deserialize(cls, data):
         return cls(type=r.WORD_TYPE(data['type']),
                    forms=data['forms'],
-                   properties=Properties.deserialize(data['properties']))
+                   properties=Properties.deserialize(data['properties']),
+                   patches={r.WORD_TYPE(int(key)): cls.deserialize(patch_data) for key, patch_data in data['patches'].iteritems()})
 
     def form(self, properties):
         real_properties = Properties(properties, self.properties)
+
+        if (self.type.is_NOUN and
+            real_properties.get(r.NUMBER).is_PLURAL and
+            real_properties.is_specified(r.INTEGER_FORM) and
+            r.WORD_TYPE.NOUN_COUNTABLE_FORM in self.patches):
+            return self.patches[r.WORD_TYPE.NOUN_COUNTABLE_FORM].form(real_properties)
+
         return self.forms[data.WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
@@ -105,7 +116,8 @@ class Word(object):
     def __eq__(self, other):
         return (self.type == other.type and
                 self.properties == other.properties and
-                self.forms == other.forms)
+                self.forms == other.forms and
+                self.patches == other.patches)
 
     @classmethod
     def get_forms_number(cls, type):
@@ -121,7 +133,7 @@ class Word(object):
 
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', only_required=False, properties=None):
+    def create_test_word(cls, type, prefix=u'w-', only_required=False, properties=None, patches=None):
         keys = cls.get_keys(type)
 
         forms = []
@@ -142,7 +154,10 @@ class Word(object):
 
             properties.update(random.choice(property_type.records))
 
-        return cls(type=type, forms=forms, properties=properties)
+        if patches is None:
+            patches = {}
+
+        return cls(type=type, forms=forms, properties=properties, patches=patches)
 
 
 class WordForm(object):
@@ -155,7 +170,7 @@ class WordForm(object):
 
     @property
     def form(self):
-        form = self.word.form(self.properties)
+        form = self.word.form(self.form_properties)
 
         if self.properties.get(r.WORD_CASE).is_UPPER:
             form = form[0].upper() + form[1:]

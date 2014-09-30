@@ -10,8 +10,6 @@ from utg import transformators
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
 
-
-
 class Substitution(object):
     __slots__ = ('id', 'dependencies')
 
@@ -103,7 +101,7 @@ class Substitution(object):
         for external in externals:
             form_properties = transformators.transform(slave_type=base_word.word.type,
                                                        slave_propeties=form_properties,
-                                                       master_type=external.word)
+                                                       master_type=external.word.type)
 
         word_form = words.WordForm(word=base_word.word, properties=properties, form_properties=form_properties)
 

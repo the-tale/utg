@@ -9,7 +9,7 @@ def transform(slave_type, slave_propeties, master_type):
     transformator = _TRANSFORMATORS.get((slave_type, master_type))
 
     if transformator:
-        return transformator(propeties=slave_propeties)
+        return transformator(properties=slave_propeties)
 
     return slave_propeties
 

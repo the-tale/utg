@@ -88,16 +88,23 @@ class WORD_CASE(WORD_PROPERTY):
 
 
 class WORD_TYPE(WORD_PROPERTY):
+    patches = Column(unique=False, no_index=True)
     schema = Column(unique=False)
     properties = Column(unique=False, no_index=True)
 
-    records = ( ('NOUN', 0, u'существительное', u'сущ', (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }), # нарицательность, разряд, склонение
-                ('ADJECTIVE', 1, u'прилагательное', u'прил', (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
-                ('PRONOUN', 2, u'местоимение', u'мест', ( NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', u'гл', (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', (TIME, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ASPECT: True}),
-                ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
-                ('TEXT', 6, u'текст', u'текст', (), {},) )
+    records = ( ('NOUN', 0, u'существительное', u'сущ', set(['NOUN_COUNTABLE_FORM']), (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
+                ('ADJECTIVE', 1, u'прилагательное', u'прил', set(), (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
+                ('PRONOUN', 2, u'местоимение', u'мест', set(), (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
+                ('VERB', 3, u'глагол', u'гл', set(), (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('INTEGER', 5, u'целое число', u'целое', set(), (), {NUMBER: True, INTEGER_FORM: True},),
+                ('TEXT', 6, u'текст', u'текст', set(), (), {},),
+                ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', set(), (CASE,), {},),
+                ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, CASE, GENDER, ANIMALITY), {}),
+                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),    )
+
+for word_type in WORD_TYPE.records:
+    word_type.patches = set(WORD_TYPE.index_name[name] for name in word_type.patches)
 
 
 class PROPERTY_TYPE(EnumWithText):

@@ -17,6 +17,8 @@ class Lexicon(object):
 
         self._data[key].append(template)
 
+    def has_key(self, key):
+        return key in self._data
 
     def get_random_template(self, key):
         if key not in self._data:

@@ -33,6 +33,10 @@ class FORM(WORD_PROPERTY):
     records = ( ('INFINITIVE', 0, u'инфинитив', u'инф'),
                 ('NORMAL', 1, u'нормальная форма', u'норм'), )
 
+class VOICE(WORD_PROPERTY):
+    records = ( ('ACTIVE', 0, u'действительный залог', u'действ'),
+                ('PASSIVE', 1, u'страдательный залог', u'страд')  )
+
 class TIME(WORD_PROPERTY):
     records = ( ('PAST', 1, u'прошлое время', u'прш'),
                 ('PRESENT', 2, u'настоящее время', u'нст'),
@@ -95,13 +99,13 @@ class WORD_TYPE(WORD_PROPERTY):
     records = ( ('NOUN', 0, u'существительное', u'сущ', set(['NOUN_COUNTABLE_FORM']), (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
                 ('ADJECTIVE', 1, u'прилагательное', u'прил', set(), (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', set(), (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', u'гл', set(), (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('VERB', 3, u'глагол', u'гл', set(), (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
                 ('INTEGER', 5, u'целое число', u'целое', set(), (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', set(), (), {},),
                 ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', set(), (CASE,), {},),
                 ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, CASE, GENDER, ANIMALITY), {}),
-                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),    )
+                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),    )
 
 for word_type in WORD_TYPE.records:
     word_type.patches = set(WORD_TYPE.index_name[name] for name in word_type.patches)
@@ -124,7 +128,8 @@ class PROPERTY_TYPE(EnumWithText):
                 ('PRONOUN_CATEGORY', 11, u'категория местоимения', PRONOUN_CATEGORY),
                 ('WORD_CASE', 12, u'размер 1-ой буквы', WORD_CASE),
                 ('WORD_TYPE', 13, u'часть речи', WORD_TYPE),
-                ('INTEGER_FORM', 14, u'виды целых чисел', INTEGER_FORM))
+                ('INTEGER_FORM', 14, u'виды целых чисел', INTEGER_FORM),
+                ('VOICE', 15, u'залог', VOICE))
 
 # имя числительное;
 # наречие;
@@ -132,5 +137,4 @@ class PROPERTY_TYPE(EnumWithText):
 # союз;
 # частица;
 # междометие;
-# причастие;
 # деепричастие;

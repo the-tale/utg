@@ -18,6 +18,7 @@ class LogicTests(TestCase):
                           r.GENDER.MASCULINE,
                           r.FORM.INFINITIVE,
                           r.TIME.PAST,
+                          r.VOICE.ACTIVE,
                           r.PRONOUN_CATEGORY.PERSONAL,
                           r.WORD_CASE.LOWER,
                           r.ANIMALITY.ANIMATE,

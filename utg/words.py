@@ -163,9 +163,9 @@ class Word(object):
 class WordForm(object):
     __slots__ = ('word', 'properties', 'form_properties')
 
-    def __init__(self, word, properties, form_properties=None):
+    def __init__(self, word, properties=None, form_properties=None):
         self.word = word
-        self.properties = Properties(properties, word.properties)
+        self.properties = word.properties if properties is None else Properties(properties, word.properties)
         self.form_properties = Properties(form_properties, word.properties) if form_properties is not None else self.properties
 
     @property

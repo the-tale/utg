@@ -13,6 +13,7 @@ EXPECTED_ORDER = [ r.FORM,
                    r.PRONOUN_CATEGORY,
 
                    r.TIME,
+                   r.VOICE,
                    r.ASPECT,
                    r.NUMBER,
                    r.CASE,

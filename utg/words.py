@@ -74,7 +74,8 @@ class Properties(object):
         return self.__unicode__().encode('utf-8')
 
     def __eq__(self, other):
-        return self._data == other._data
+        return (isinstance(other, Properties) and
+                self._data == other._data)
 
 
 class Word(object):
@@ -114,7 +115,8 @@ class Word(object):
         return self.form(properties=self.properties)
 
     def __eq__(self, other):
-        return (self.type == other.type and
+        return (isinstance(other, Word) and
+                self.type == other.type and
                 self.properties == other.properties and
                 self.forms == other.forms and
                 self.patches == other.patches)

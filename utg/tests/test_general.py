@@ -28,6 +28,8 @@ EXPECTED_ORDER = [ r.FORM,
 
                    r.WORD_CASE,
 
+                   r.PREPOSITION_FORM,
+
                    r.WORD_TYPE]
 
 

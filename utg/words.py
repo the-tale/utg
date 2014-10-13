@@ -3,6 +3,7 @@ import random
 
 from utg import relations as r
 from utg import data
+from utg import utils
 
 
 class Properties(object):
@@ -79,13 +80,14 @@ class Properties(object):
 
 
 class Word(object):
-    __slots__ = ('type', 'forms', 'properties', 'patches')
+    __slots__ = ('type', 'forms', 'properties', 'patches', '_cache')
 
     def __init__(self, type, forms, properties, patches=None):
         self.type = type
         self.forms = forms
         self.properties = properties
         self.patches = {} if patches is None else patches
+        self._cache = {}
 
     def serialize(self):
         return {'type': self.type.value,
@@ -135,12 +137,12 @@ class Word(object):
 
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', only_required=False, properties=None, patches=None):
+    def create_test_word(cls, type, prefix=u'w-', suffix=u'', only_required=False, properties=None, patches=None):
         keys = cls.get_keys(type)
 
         forms = []
         for key in keys:
-            forms.append(prefix + u','.join(property.verbose_id for property in key if property is not None))
+            forms.append(prefix + u','.join(property.verbose_id for property in key if property is not None) + suffix)
 
         if properties is None:
             properties = Properties()
@@ -161,14 +163,37 @@ class Word(object):
 
         return cls(type=type, forms=forms, properties=properties, patches=patches)
 
+    @utils.cached_property('_cache')
+    def number_of_syllables(self):
+        form = self.forms[0]
+        return max(1, sum(form.count(char) for char in data.VOWELS))
+
+    @utils.cached_property('_cache')
+    def has_fluent_vowel(self):
+        form = self.forms[0]
+        base_vowels = u''.join([char for char in form if char in data.VOWELS])
+
+        # TODO: does we need to check patches forms?
+
+        for other_form in self.forms[1:]:
+            if not other_form: # form can be unspecified
+                continue
+            form_vowels = u''.join([char for char in other_form if char in data.VOWELS])
+
+            if not form_vowels.startswith(base_vowels):
+                return True
+
+        return False
+
 
 class WordForm(object):
-    __slots__ = ('word', 'properties', 'form_properties')
+    __slots__ = ('word', 'properties', 'form_properties', '_cache')
 
     def __init__(self, word, properties=None, form_properties=None):
         self.word = word
         self.properties = word.properties if properties is None else Properties(properties, word.properties)
         self.form_properties = Properties(form_properties, word.properties) if form_properties is not None else self.properties
+        self._cache = {}
 
     @property
     def form(self):
@@ -178,6 +203,12 @@ class WordForm(object):
             form = form[0].upper() + form[1:]
 
         return form
+
+    @utils.cached_property('_cache')
+    def starts_with_consonant_cluster(self):
+        form = self.form
+        return (form[0] in data.CONSONANTS) and (len(form) == 1 or form[1] in data.CONSONANTS)
+
 
     def __eq__(self, other):
         return (self.word == other.word and

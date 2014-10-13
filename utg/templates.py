@@ -99,9 +99,9 @@ class Substitution(object):
 
         form_properties = properties
         for external in externals:
-            form_properties = transformators.transform(slave_type=base_word.word.type,
+            form_properties = transformators.transform(slave_word=base_word.word,
                                                        slave_propeties=form_properties,
-                                                       master_type=external.word.type)
+                                                       master_form=external)
 
         word_form = words.WordForm(word=base_word.word, properties=properties, form_properties=form_properties)
 

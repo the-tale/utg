@@ -91,6 +91,11 @@ class WORD_CASE(WORD_PROPERTY):
                 ('UPPER', 1, u'заглавная', u'загл') )
 
 
+class PREPOSITION_FORM(WORD_PROPERTY):
+    records = ( ('NORMAL', 0, u'основная форма', u'осн'),
+                ('ALTERNATIVE', 1, u'альтернативная форма', u'алт') )
+
+
 class WORD_TYPE(WORD_PROPERTY):
     patches = Column(unique=False, no_index=True)
     schema = Column(unique=False)
@@ -105,7 +110,8 @@ class WORD_TYPE(WORD_PROPERTY):
                 ('TEXT', 6, u'текст', u'текст', set(), (), {},),
                 ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', set(), (CASE,), {},),
                 ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, CASE, GENDER, ANIMALITY), {}),
-                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),    )
+                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('PREPOSITION', 10, u'предлог', u'предл', set(), (PREPOSITION_FORM,), {}) )
 
 for word_type in WORD_TYPE.records:
     word_type.patches = set(WORD_TYPE.index_name[name] for name in word_type.patches)
@@ -129,7 +135,8 @@ class PROPERTY_TYPE(EnumWithText):
                 ('WORD_CASE', 12, u'размер 1-ой буквы', WORD_CASE),
                 ('WORD_TYPE', 13, u'часть речи', WORD_TYPE),
                 ('INTEGER_FORM', 14, u'виды целых чисел', INTEGER_FORM),
-                ('VOICE', 15, u'залог', VOICE))
+                ('VOICE', 15, u'залог', VOICE),
+                ('PREPOSITION_FORM', 16, u'форма предлога', PREPOSITION_FORM))
 
 # имя числительное;
 # наречие;

@@ -29,6 +29,7 @@ class LogicTests(TestCase):
                           r.ASPECT.IMPERFECTIVE,
                           r.MOOD.INDICATIVE,
                           r.INTEGER_FORM.SINGULAR,
+                          r.PREPOSITION_FORM.NORMAL,
                           None])
 
         self.assertEqual(set(logic.get_default_properties().values()),

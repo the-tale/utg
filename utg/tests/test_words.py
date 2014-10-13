@@ -6,6 +6,7 @@ from unittest import TestCase
 
 from utg import words
 from utg import logic
+from utg import data
 from utg import relations as r
 
 
@@ -149,6 +150,39 @@ class WordTests(TestCase):
         self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, random.choice(r.INTEGER_FORM.records))), u'p-дт')
 
 
+    def test_number_of_syllables(self):
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms[0] = u'б'
+        self.assertEqual(word.number_of_syllables, 1)
+
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms[0] = u'а'
+        self.assertEqual(word.number_of_syllables, 1)
+
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms[0] = u'абвг'
+        self.assertEqual(word.number_of_syllables, 1)
+
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms[0] = u'абракадабра'
+        self.assertEqual(word.number_of_syllables, 5)
+
+    def test_has_fluent_vowel(self):
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms = [u'абракадубр']*len(word.forms)
+        self.assertFalse(word.has_fluent_vowel)
+
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
+        word.forms = [u'абракадубр'] + [u'абракадубр' + random.choice(list(data.VOWELS)) for i in xrange(len(word.forms)-1)]
+        self.assertFalse(word.has_fluent_vowel)
+
+        word = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+                                   forms=[u'сон', u'сна', u'сну', u'сон', u'сном', u'сне',
+                                          u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'],
+                                   properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
+        self.assertTrue(word.has_fluent_vowel)
+
+
 class WordFormTests(TestCase):
 
     def setUp(self):
@@ -165,3 +199,16 @@ class WordFormTests(TestCase):
                               properties=words.Properties(r.NUMBER.PLURAL),
                               form_properties=words.Properties(r.NUMBER.PLURAL, r.CASE.DATIVE),)
         self.assertEqual(form.form, u'w-мн,дт')
+
+
+    def test_starts_with_consonant_cluster(self):
+        word = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+                          forms=[u'сон', u'сна', u'сну', u'сон', u'сном', u'сне',
+                                 u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'],
+                          properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
+
+        form = words.WordForm(word=word, properties=words.Properties(r.CASE.NOMINATIVE)) # сон
+        self.assertFalse(form.starts_with_consonant_cluster)
+
+        form = words.WordForm(word=word, properties=words.Properties(r.CASE.DATIVE)) # сну
+        self.assertTrue(form.starts_with_consonant_cluster)

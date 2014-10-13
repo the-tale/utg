@@ -33,3 +33,7 @@ DEFAULT_PROPERTIES = logic.get_default_properties()
 
 
 WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)
+
+
+CONSONANTS = set(u'бвгджзйклмнпрстфхцчшщъьБВГДЖЗЙКЛМНПРСТФХЦЧШЩЪЬ')
+VOWELS = set(u'аеёиоуыэюяАЕЁИОУЫЭЮЯ')

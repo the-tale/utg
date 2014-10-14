@@ -7,7 +7,7 @@ from utg import utils
 
 
 class Properties(object):
-
+    __slots__ = ('_data',)
 
     def __init__(self, *argv):
         self._data = {}
@@ -27,10 +27,12 @@ class Properties(object):
             if property is None:
                 continue
 
-            if isinstance(property, self.__class__):
-                self._data.update(property._data)
-            else:
+            # optimization, replace of isinstance
+            if hasattr(property, '_relation'):
                 self._data[property._relation] = property
+            else:
+                self._data.update(property._data)
+
 
     def get_key(self, key, schema=None):
         if schema is None:
@@ -40,16 +42,14 @@ class Properties(object):
         for property_group in key:
             property = self.get(property_group)
 
-            if property_group in data.INVERTED_RESTRICTIONS:
+            for p in data.INVERTED_RESTRICTIONS.get(property_group, ()):
 
-                for p in data.INVERTED_RESTRICTIONS[property_group]:
+                if p._relation not in schema:
+                    continue
 
-                    if p._relation not in schema:
-                        continue
-
-                    if self.get(p._relation) == p:
-                        property = None
-                        break
+                if self.get(p._relation) == p:
+                    property = None
+                    break
 
             value.append(property)
 
@@ -80,14 +80,13 @@ class Properties(object):
 
 
 class Word(object):
-    __slots__ = ('type', 'forms', 'properties', 'patches', '_cache')
+    __slots__ = ('type', 'forms', 'properties', 'patches', '_lazy__number_of_syllables', '_lazy__has_fluent_vowel')
 
-    def __init__(self, type, forms, properties, patches=None):
+    def __init__(self, type, forms, properties=Properties(), patches=None):
         self.type = type
         self.forms = forms
         self.properties = properties
         self.patches = {} if patches is None else patches
-        self._cache = {}
 
     def serialize(self):
         return {'type': self.type.value,
@@ -103,15 +102,19 @@ class Word(object):
                    patches={r.WORD_TYPE(int(key)): cls.deserialize(patch_data) for key, patch_data in data['patches'].iteritems()})
 
     def form(self, properties):
-        real_properties = Properties(properties, self.properties)
+        # we must update properties with self.properties
+        # since self.properties can contain items form schema (example: NUMBER in NOUN)
+        return self._form(Properties(properties, self.properties))
 
-        if (self.type.is_NOUN and
-            real_properties.get(r.NUMBER).is_PLURAL and
-            real_properties.is_specified(r.INTEGER_FORM) and
-            r.WORD_TYPE.NOUN_COUNTABLE_FORM in self.patches):
-            return self.patches[r.WORD_TYPE.NOUN_COUNTABLE_FORM].form(real_properties)
+    def _form(self, properties):
+        # here we expected correct full properties
+        if (self.type.is_NOUN  and
+            r.WORD_TYPE.NOUN_COUNTABLE_FORM in self.patches and
+            properties.get(r.NUMBER).is_PLURAL and
+            properties.is_specified(r.INTEGER_FORM)):
+            return self.patches[r.WORD_TYPE.NOUN_COUNTABLE_FORM]._form(properties)
 
-        return self.forms[data.WORDS_CACHES[self.type][real_properties.get_key(key=self.type.schema)]]
+        return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
         return self.form(properties=self.properties)
@@ -163,12 +166,12 @@ class Word(object):
 
         return cls(type=type, forms=forms, properties=properties, patches=patches)
 
-    @utils.cached_property('_cache')
+    @utils.lazy_property
     def number_of_syllables(self):
         form = self.forms[0]
         return max(1, sum(form.count(char) for char in data.VOWELS))
 
-    @utils.cached_property('_cache')
+    @utils.lazy_property
     def has_fluent_vowel(self):
         form = self.forms[0]
         base_vowels = u''.join([char for char in form if char in data.VOWELS])
@@ -187,29 +190,35 @@ class Word(object):
 
 
 class WordForm(object):
-    __slots__ = ('word', 'properties', 'form_properties', '_cache')
+    __slots__ = ('word', 'properties', 'form_properties', '_lazy__form', '_lazy__starts_with_consonant_cluster')
 
     def __init__(self, word, properties=None, form_properties=None):
         self.word = word
         self.properties = word.properties if properties is None else Properties(properties, word.properties)
         self.form_properties = Properties(form_properties, word.properties) if form_properties is not None else self.properties
-        self._cache = {}
 
-    @property
-    def form(self):
-        form = self.word.form(self.form_properties)
 
-        if self.properties.get(r.WORD_CASE).is_UPPER:
+    @classmethod
+    def get_form(cls, word, properties):
+        form = word._form(properties)
+
+        if properties.get(r.WORD_CASE).is_UPPER:
             form = form[0].upper() + form[1:]
 
         return form
 
-    @utils.cached_property('_cache')
+    @utils.lazy_property
+    def form(self):
+        return self.get_form(self.word, self.form_properties)
+
+    @utils.lazy_property
     def starts_with_consonant_cluster(self):
         form = self.form
         return (form[0] in data.CONSONANTS) and (len(form) == 1 or form[1] in data.CONSONANTS)
 
 
     def __eq__(self, other):
+        # print self.word == other.word
+        # print self.properties, other.properties
         return (self.word == other.word and
                 self.properties == other.properties)

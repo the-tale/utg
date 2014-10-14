@@ -6,6 +6,7 @@ from utg import exceptions
 from utg import words
 from utg import data
 from utg import transformators
+from utg import relations as r
 
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
@@ -72,15 +73,16 @@ class Substitution(object):
         external_words = []
 
         for dependency in self.dependencies:
+            if dependency in externals:
+                properties.append(externals[dependency].properties)
+                external_words.append(externals[dependency])
+                continue
+
             if isinstance(dependency, words.Properties):
                 properties.append(dependency)
                 continue
 
-            if dependency not in externals:
-                raise exceptions.ExternalDependecyNotFoundError(dependency=dependency)
-
-            properties.append(externals[dependency].properties)
-            external_words.append(externals[dependency])
+            raise exceptions.ExternalDependecyNotFoundError(dependency=dependency)
 
         return properties, external_words
 
@@ -88,24 +90,24 @@ class Substitution(object):
     def get_text(self, externals, dictionary):
 
         if self.id in externals:
-            base_word = externals[self.id]
+            base_form = externals[self.id]
         else:
             # TODO: get_word must use type information if substitution has it
-            base_word = dictionary.get_word(self.id)
+            base_form = dictionary.get_word(self.id)
 
         properties_list, externals = self._list_propeties(externals=externals)
 
-        properties = base_word.properties.clone(*properties_list)
+        properties_list.append(base_form.word.properties)
+
+        properties = base_form.properties.clone(*properties_list)
 
         form_properties = properties
         for external in externals:
-            form_properties = transformators.transform(slave_word=base_word.word,
+            form_properties = transformators.transform(slave_word=base_form.word,
                                                        slave_propeties=form_properties,
                                                        master_form=external)
 
-        word_form = words.WordForm(word=base_word.word, properties=properties, form_properties=form_properties)
-
-        return word_form.form
+        return words.WordForm.get_form(base_form.word, form_properties)
 
     def __eq__(self, other):
         return (self.id == other.id and
@@ -157,8 +159,9 @@ class Template(object):
         self.template = text
 
     def substitute(self, externals, dictionary):
-        substitutions = [substitution.get_text(externals=externals, dictionary=dictionary) for substitution in self._substitutions]
-        return self.template % tuple(substitutions)
+        substitutions = tuple(substitution.get_text(externals=externals, dictionary=dictionary)
+                              for substitution in self._substitutions)
+        return self.template % substitutions
 
     def __eq__(self, other):
         return (self._substitutions == other._substitutions and

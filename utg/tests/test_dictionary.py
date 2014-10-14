@@ -24,9 +24,9 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word)
 
         self.assertEqual(self.dictionary._data,
-                         {'x1': [(word, 0)],
-                          'x2': [(word, 1)],
-                          'x3': [(word, 2)]})
+                         {'x1': [words.WordForm(word, properties=word.properties.clone(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR))],
+                          'x2': [words.WordForm(word, properties=word.properties.clone(r.CASE.GENITIVE, r.NUMBER.SINGULAR))],
+                          'x3': [words.WordForm(word, properties=word.properties.clone(r.CASE.DATIVE, r.NUMBER.SINGULAR))]})
 
     def test_add_word__duplicate_normal_form(self):
         word = words.Word(type=r.WORD_TYPE.NOUN, forms=['x1', 'x2', 'x3'], properties=words.Properties())
@@ -45,8 +45,8 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word)
 
         self.assertEqual(self.dictionary._data,
-                         {'x1': [(word, 0)],
-                          'x2': [(word, 1)]})
+                         {'x1': [words.WordForm(word, properties=word.properties.clone(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR))],
+                          'x2': [words.WordForm(word, properties=word.properties.clone(r.CASE.GENITIVE, r.NUMBER.SINGULAR))]})
 
 
     def test_add_word__duplicates(self):
@@ -57,11 +57,12 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_2)
 
         self.assertEqual(self.dictionary._data,
-                         {'x1': [(word_1, 0)],
-                          'x2': [(word_1, 1), (word_2, 1)],
-                          'x3': [(word_1, 2)],
-                          'y1': [(word_2, 0)],
-                          'y3': [(word_2, 2)]})
+                         {'x1': [words.WordForm(word_1, properties=word_1.properties.clone(r.CASE.NOMINATIVE, r.NUMBER.SINGULAR))],
+                          'x2': [words.WordForm(word_1, properties=word_1.properties.clone(r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
+                                 words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.MASCULINE, r.FORM.NORMAL, r.TIME.PAST, r.MOOD.INDICATIVE, r.NUMBER.SINGULAR))],
+                          'x3': [words.WordForm(word_1, properties=word_1.properties.clone(r.CASE.DATIVE, r.NUMBER.SINGULAR))],
+                          'y1': [words.WordForm(word_2, properties=word_2.properties.clone(r.FORM.INFINITIVE))],
+                          'y3': [words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.MASCULINE, r.FORM.NORMAL, r.TIME.PAST, r.MOOD.CONDITIONAL, r.NUMBER.SINGULAR))]})
 
 
     def test_get_words(self):
@@ -86,17 +87,6 @@ class DictionaryTests(TestCase):
         self.assertEqual(self.dictionary.get_words('x3'), [words.WordForm(word=word_1, properties=properties_1_3)])
         self.assertEqual(self.dictionary.get_words('y1'), [words.WordForm(word=word_2, properties=properties_2_1)])
         self.assertEqual(self.dictionary.get_words('y3'), [words.WordForm(word=word_2, properties=properties_2_3)])
-
-
-    def test_get_words__integer(self):
-        self.assertEqual(self.dictionary.get_words('13'), [])
-
-        word = words.Word(type=r.WORD_TYPE.INTEGER,
-                          forms=['666'],
-                          properties=words.Properties(r.NUMBER.PLURAL, r.INTEGER_FORM.PLURAL))
-
-        self.assertEqual(self.dictionary.get_words(666),
-                         [words.WordForm(word=word, properties=word.properties)])
 
 
     def test_get_words__filter_by_type(self):

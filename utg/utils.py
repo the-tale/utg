@@ -2,24 +2,18 @@
 import functools
 
 
-def cached_property(cache_attribute):
+def lazy_property(func):
 
-    def decorator(func):
+    lazy_name = '_lazy__%s' % func.__name__
 
-        @functools.wraps(func)
-        def getter(self):
-            cache = getattr(self, cache_attribute)
-            key = func.__name__
+    @functools.wraps(func)
+    def getter(self):
+        if not hasattr(self, lazy_name):
+            setattr(self, lazy_name, func(self))
+        return getattr(self, lazy_name)
 
-            if key in cache:
-                return cache[key]
+    def deleter(self):
+        if hasattr(self, lazy_name):
+            delattr(self, lazy_name)
 
-            value = func(self)
-
-            cache[key] = value
-
-            return value
-
-        return property(fget=getter)
-
-    return decorator
+    return property(fget=getter, fdel=deleter)

@@ -54,4 +54,20 @@ class ConstructTests(TestCase):
 
         for number, properties in tests.iteritems():
             word = words.Word(type=r.WORD_TYPE.INTEGER, forms=['%d' % number], properties=properties)
-            self.assertEqual(constructors.construct_integer(number), word)
+            integer_form = constructors.construct_integer(number)
+            self.assertEqual(integer_form.word, word)
+            self.assertEqual(integer_form.properties, word.properties)
+
+    def test_construct_integer_cache(self):
+        self.assertNotEqual(id(constructors.construct_integer(1)), id(constructors.construct_integer(-1)))
+
+        a = constructors.construct_integer(constructors._INTEGER_CACHE_LEFT-1)
+        b = constructors.construct_integer(constructors._INTEGER_CACHE_LEFT-1)
+        self.assertFalse(a is b)
+
+        a = constructors.construct_integer(constructors._INTEGER_CACHE_RIGHT+1)
+        b = constructors.construct_integer(constructors._INTEGER_CACHE_RIGHT+1)
+        self.assertFalse(a is b)
+
+        for i in xrange(constructors._INTEGER_CACHE_RIGHT - constructors._INTEGER_CACHE_LEFT+1):
+            self.assertEqual(id(constructors.construct_integer(i)), id(constructors.construct_integer(i)))

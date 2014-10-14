@@ -7,6 +7,11 @@ from utg import constructors
 from utg import relations as r
 
 
+_INVERTED_WORDS_CACHES__PROPERTIES = {}
+for word_type in r.WORD_TYPE.records:
+    _INVERTED_WORDS_CACHES__PROPERTIES[word_type] = [words.Properties(*key) for key in data.INVERTED_WORDS_CACHES[word_type]]
+
+
 class Dictionary(object):
     __slots__ = ('_data', '_index')
 
@@ -29,22 +34,16 @@ class Dictionary(object):
             if form not in self._data:
                 self._data[form] = []
 
-            if all(word is not test_word for test_word, j in self._data[form]):
-                self._data[form].append((word, i))
+            if all(word is not test_form.word for test_form in self._data[form]):
+                self._data[form].append(words.WordForm(word=word, properties=_INVERTED_WORDS_CACHES__PROPERTIES[word.type][i]))
 
 
     def get_words(self, text, type=None):
 
-        if isinstance(text, (int, long)):
-            word = constructors.construct_integer(text)
-            return [words.WordForm(word=word, properties=word.properties)]
-
         if text not in self._data:
             return []
 
-        choices = [words.WordForm(word=word,
-                                  properties=words.Properties(*data.INVERTED_WORDS_CACHES[word.type][index]))
-                   for word, index in self._data[text]]
+        choices = self._data[text]
 
         if type:
             choices = [word for word in choices if word.word.type == type]

@@ -139,6 +139,16 @@ class TemplateTests(TestCase):
         self.assertEqual(substitution.dependencies, [words.Properties(r.CASE.INSTRUMENTAL, r.NUMBER.SINGULAR)])
 
 
+    def test_parse__percent_symbol(self):
+        TEXT = u'[external_1|загл] 1 [ед3|external_2|буд] 2% [external_2|тв,ед]'
+
+        template = templates.Template()
+
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        self.assertEqual(template.template, u'%s 1 %s 2%% %s')
+
+
     def test_substitute(self):
         TEXT = u'[external_1|загл] 1 [w-ед,тв|external_2|буд] 2 [external_2|тв,ед]'
 
@@ -163,6 +173,32 @@ class TemplateTests(TestCase):
                                     dictionary=dictionary)
 
         self.assertEqual(result, u'X-ед,им 1 w-мн,им 2 y-мн,тв')
+
+
+    def test_substitute__percent_symbol(self):
+        TEXT = u'[external_1|загл] 1 [w-ед,тв|external_2|буд] 2% [external_2|тв,ед]'
+
+        # TEXT = u'[external_2|тв,ед]'
+
+        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_2 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
+        word_3 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+
+        dictionary = Dictionary()
+
+        dictionary.add_word(word_1)
+        dictionary.add_word(word_2)
+        dictionary.add_word(word_3)
+
+        template = templates.Template()
+
+        template.parse(TEXT, externals=['external_1', 'external_2'])
+
+        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-ед,им'),
+                                                'external_2': dictionary.get_word(u'y-мн,им'),},
+                                    dictionary=dictionary)
+
+        self.assertEqual(result, u'X-ед,им 1 w-мн,им 2% y-мн,тв')
 
     def test_get_undictionaried_words(self):
         word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))

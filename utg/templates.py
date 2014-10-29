@@ -6,7 +6,7 @@ from utg import exceptions
 from utg import words
 from utg import data
 from utg import transformators
-from utg import relations as r
+
 
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
 
@@ -149,6 +149,8 @@ class Template(object):
         return words
 
     def parse(self, text, externals):
+
+        text = text.replace('%', '%%')
 
         variables = _VARIABLE_REGEX.findall(text)
 

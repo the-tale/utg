@@ -34,13 +34,13 @@ class FORM(WORD_PROPERTY):
                 ('NORMAL', 1, u'нормальная форма', u'норм'), )
 
 class VOICE(WORD_PROPERTY):
-    records = ( ('ACTIVE', 0, u'действительный залог', u'действ'),
-                ('PASSIVE', 1, u'страдательный залог', u'страд')  )
+    records = ( ('ACTIVE', 0, u'активный залог', u'действ'),
+                ('PASSIVE', 1, u'пассивный залог', u'страд')  )
 
 class TIME(WORD_PROPERTY):
     records = ( ('PAST', 1, u'прошлое время', u'прш'),
                 ('PRESENT', 2, u'настоящее время', u'нст'),
-                ('FUTURE', 3, u'будущее будущее', u'буд') )
+                ('FUTURE', 3, u'будущее время', u'буд') )
 
 class PERSON(WORD_PROPERTY):
     records = ( ('FIRST', 0, u'1-ое лицо', u'1л'),

@@ -8,7 +8,10 @@ from utg import logic
 from utg import data
 
 
-EXPECTED_ORDER = [ r.FORM,
+EXPECTED_ORDER = [ r.VERB_FORM,
+                   r.ADJECTIVE_FORM,
+                   r.PARTICIPLE_FORM,
+
                    r.ADJECTIVE_CATEGORY,
                    r.PRONOUN_CATEGORY,
 

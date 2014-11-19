@@ -1,5 +1,6 @@
 # coding: utf-8
 import random
+import itertools
 
 from utg import relations as r
 from utg import data
@@ -79,6 +80,12 @@ class Properties(object):
                 self._data == other._data)
 
 
+    def manhattan_distance(self):
+        return len([1
+                    for property_relation, property_value in self._data.iteritems()
+                    if property_value != data.DEFAULT_PROPERTIES[property_relation]])
+
+
 class Word(object):
     __slots__ = ('type', 'forms', 'properties', 'patches', '_lazy__number_of_syllables', '_lazy__has_fluent_vowel')
 
@@ -108,6 +115,7 @@ class Word(object):
 
     def _form(self, properties):
         # here we expected correct full properties
+
         if (self.type.is_NOUN  and
             r.WORD_TYPE.NOUN_COUNTABLE_FORM in self.patches and
             properties.get(r.NUMBER).is_PLURAL and
@@ -118,6 +126,20 @@ class Word(object):
 
     def normal_form(self):
         return self.form(properties=self.properties)
+
+    def all_forms(self, main_word=None):
+
+        if main_word is None:
+            main_word = self
+
+        main_forms = (WordForm(word=main_word, properties=_INVERTED_WORDS_CACHES__PROPERTIES[self.type][i]) for i in xrange(len(self.forms)))
+
+        patches_forms = []
+
+        for patch in self.patches.itervalues():
+            patches_forms.append(patch.all_forms(main_word=main_word))
+
+        return itertools.chain(main_forms, *patches_forms)
 
     def __eq__(self, other):
         return (isinstance(other, Word) and
@@ -218,7 +240,10 @@ class WordForm(object):
 
 
     def __eq__(self, other):
-        # print self.word == other.word
-        # print self.properties, other.properties
         return (self.word == other.word and
                 self.properties == other.properties)
+
+
+_INVERTED_WORDS_CACHES__PROPERTIES = {}
+for word_type in r.WORD_TYPE.records:
+    _INVERTED_WORDS_CACHES__PROPERTIES[word_type] = [Properties(*key) for key in data.INVERTED_WORDS_CACHES[word_type]]

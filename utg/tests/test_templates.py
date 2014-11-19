@@ -154,7 +154,7 @@ class TemplateTests(TestCase):
 
         # TEXT = u'[external_2|тв,ед]'
 
-        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
         word_2 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
         word_3 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
@@ -180,7 +180,7 @@ class TemplateTests(TestCase):
 
         # TEXT = u'[external_2|тв,ед]'
 
-        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
+        word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
         word_2 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='x-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
         word_3 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='y-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 

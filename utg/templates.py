@@ -141,7 +141,7 @@ class Template(object):
             if substitution.id in externals:
                 continue
 
-            if dictionary.has_words(substitution.id):
+            if dictionary.has_word(substitution.id):
                 continue
 
             words.append(substitution.id)

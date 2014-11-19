@@ -183,6 +183,19 @@ class WordTests(TestCase):
         self.assertTrue(word.has_fluent_vowel)
 
 
+    def test_all_forms(self):
+        patch = words.Word.create_test_word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM, prefix=u'p-')
+        patches = {r.WORD_TYPE.NOUN_COUNTABLE_FORM: patch}
+        word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, patches=patches)
+
+        forms = list(word.all_forms())
+
+        self.assertEqual(len(forms), 6*2+6)
+        # print u'\n'.join([word_form.form for word_form in forms])
+        self.assertEqual([word_form.form for word_form in forms], word.forms + patch.forms)
+
+
+
 class WordFormTests(TestCase):
 
     def setUp(self):

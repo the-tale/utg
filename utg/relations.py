@@ -29,7 +29,7 @@ class GENDER(WORD_PROPERTY):
                 ('NEUTER', 1, u'средний род', u'ср'),
                 ('FEMININE', 2, u'женский род', u'жр') )
 
-class FORM(WORD_PROPERTY):
+class VERB_FORM(WORD_PROPERTY):
     records = ( ('INFINITIVE', 0, u'инфинитив', u'инф'),
                 ('NORMAL', 1, u'нормальная форма', u'норм'), )
 
@@ -86,6 +86,16 @@ class INTEGER_FORM(WORD_PROPERTY):
                 ('PLURAL', 3, u'остальные целые', u'цост'),
                 ('MIL_BIL', 4, u'миллион и миллиард', u'цмм'), )
 
+
+class ADJECTIVE_FORM(WORD_PROPERTY):
+    records = ( ('FULL', 0, u'полная форма', u'полнприл'),
+                ('SHORT', 1, u'краткая форма', u'крприл'))
+
+class PARTICIPLE_FORM(WORD_PROPERTY):
+    records = ( ('FULL', 0, u'полная форма', u'полнприч'),
+                ('SHORT', 1, u'краткая форма', u'крприч') )
+
+
 class WORD_CASE(WORD_PROPERTY):
     records = ( ('LOWER', 0, u'строчная', u'строч'),
                 ('UPPER', 1, u'заглавная', u'загл') )
@@ -102,15 +112,15 @@ class WORD_TYPE(WORD_PROPERTY):
     properties = Column(unique=False, no_index=True)
 
     records = ( ('NOUN', 0, u'существительное', u'сущ', set(['NOUN_COUNTABLE_FORM']), (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
-                ('ADJECTIVE', 1, u'прилагательное', u'прил', set(), (NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
+                ('ADJECTIVE', 1, u'прилагательное', u'прил', set(), (ADJECTIVE_FORM, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', set(), (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', u'гл', set(), (FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('VERB', 3, u'глагол', u'гл', set(), (VERB_FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
                 ('INTEGER', 5, u'целое число', u'целое', set(), (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', set(), (), {},),
                 ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', set(), (CASE,), {},),
-                ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, CASE, GENDER, ANIMALITY), {}),
-                ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                # ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, GENDER), {}),
+                # ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (NUMBER, GENDER), {ASPECT: True, TIME: True}),
                 ('PREPOSITION', 10, u'предлог', u'предл', set(), (PREPOSITION_FORM,), {}) )
 
 for word_type in WORD_TYPE.records:
@@ -124,7 +134,7 @@ class PROPERTY_TYPE(EnumWithText):
                 ('ANIMALITY', 1, u'одушевлённость', ANIMALITY),
                 ('NUMBER', 2, u'число', NUMBER),
                 ('GENDER', 3, u'род', GENDER),
-                ('FORM', 4, u'форма глагола', FORM),
+                ('FORM', 4, u'форма глагола', VERB_FORM),
                 ('TIME', 5, u'время', TIME),
                 ('PERSON', 6, u'лицо', PERSON),
                 ('ASPECT', 7, u'вид', ASPECT),
@@ -136,7 +146,10 @@ class PROPERTY_TYPE(EnumWithText):
                 ('WORD_TYPE', 13, u'часть речи', WORD_TYPE),
                 ('INTEGER_FORM', 14, u'виды целых чисел', INTEGER_FORM),
                 ('VOICE', 15, u'залог', VOICE),
-                ('PREPOSITION_FORM', 16, u'форма предлога', PREPOSITION_FORM))
+                ('PREPOSITION_FORM', 16, u'форма предлога', PREPOSITION_FORM),
+                ('ADJECTIVE_FORM', 17, u'форма прилагательного', ADJECTIVE_FORM),
+                ('PARTICIPLE_FORM', 18, u'форма причастия', PARTICIPLE_FORM)
+                )
 
 # имя числительное;
 # наречие;

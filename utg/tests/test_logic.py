@@ -16,7 +16,9 @@ class LogicTests(TestCase):
     def test_get_default_properties(self):
         properties = set([r.CASE.NOMINATIVE,
                           r.GENDER.MASCULINE,
-                          r.FORM.INFINITIVE,
+                          r.VERB_FORM.INFINITIVE,
+                          r.ADJECTIVE_FORM.FULL,
+                          r.PARTICIPLE_FORM.FULL,
                           r.TIME.PAST,
                           r.VOICE.ACTIVE,
                           r.PRONOUN_CATEGORY.PERSONAL,
@@ -37,12 +39,12 @@ class LogicTests(TestCase):
 
 
     def test_keys_generation__no_restrictions(self):
-        schema = (r.GENDER, r.FORM, r.CASE)
+        schema = (r.GENDER, r.VERB_FORM, r.CASE)
         restrictions = set()
 
         expected = []
         for gender in r.GENDER.records:
-            for form in r.FORM.records:
+            for form in r.VERB_FORM.records:
                 for case in r.CASE.records:
                     expected.append([gender, form, case])
 
@@ -51,19 +53,19 @@ class LogicTests(TestCase):
 
 
     def test_keys_generation__with_restrictions(self):
-        schema = (r.GENDER, r.FORM, r.CASE)
-        restrictions = {r.GENDER.MASCULINE: [r.FORM, r.CASE],
-                        r.GENDER.FEMININE: [r.FORM],
-                        r.FORM.INFINITIVE: [r.CASE]}
+        schema = (r.GENDER, r.VERB_FORM, r.CASE)
+        restrictions = {r.GENDER.MASCULINE: [r.VERB_FORM, r.CASE],
+                        r.GENDER.FEMININE: [r.VERB_FORM],
+                        r.VERB_FORM.INFINITIVE: [r.CASE]}
 
         expected = [ [r.GENDER.MASCULINE, None, None],
-                     [r.GENDER.NEUTER, r.FORM.INFINITIVE, None],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.NOMINATIVE],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.GENITIVE],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.DATIVE],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.ACCUSATIVE],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.INSTRUMENTAL],
-                     [r.GENDER.NEUTER, r.FORM.NORMAL, r.CASE.PREPOSITIONAL],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INFINITIVE, None],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.NOMINATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.GENITIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.DATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.ACCUSATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.INSTRUMENTAL],
+                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.PREPOSITIONAL],
                      [r.GENDER.FEMININE, None, r.CASE.NOMINATIVE],
                      [r.GENDER.FEMININE, None, r.CASE.GENITIVE],
                      [r.GENDER.FEMININE, None, r.CASE.DATIVE],
@@ -75,16 +77,16 @@ class LogicTests(TestCase):
                          expected)
 
     def test__get_full_restrictions(self):
-        restrictions = {r.FORM.NORMAL: (r.TIME, r.GENDER),
+        restrictions = {r.VERB_FORM.NORMAL: (r.TIME, r.GENDER),
                         r.GENDER.MASCULINE: (r.TIME,)}
 
         self.assertEqual(logic._get_full_restrictions(restrictions),
-                         set([ (r.FORM.NORMAL, r.TIME.PAST),
-                               (r.FORM.NORMAL, r.TIME.PRESENT),
-                               (r.FORM.NORMAL, r.TIME.FUTURE),
-                               (r.FORM.NORMAL, r.GENDER.MASCULINE),
-                               (r.FORM.NORMAL, r.GENDER.NEUTER),
-                               (r.FORM.NORMAL, r.GENDER.FEMININE),
+                         set([ (r.VERB_FORM.NORMAL, r.TIME.PAST),
+                               (r.VERB_FORM.NORMAL, r.TIME.PRESENT),
+                               (r.VERB_FORM.NORMAL, r.TIME.FUTURE),
+                               (r.VERB_FORM.NORMAL, r.GENDER.MASCULINE),
+                               (r.VERB_FORM.NORMAL, r.GENDER.NEUTER),
+                               (r.VERB_FORM.NORMAL, r.GENDER.FEMININE),
 
                                (r.GENDER.MASCULINE, r.TIME.PAST),
                                (r.GENDER.MASCULINE, r.TIME.PRESENT),
@@ -94,12 +96,12 @@ class LogicTests(TestCase):
                                (r.TIME.PRESENT, r.GENDER.MASCULINE),
                                (r.TIME.FUTURE, r.GENDER.MASCULINE),
 
-                               (r.TIME.PAST, r.FORM.NORMAL),
-                               (r.TIME.PRESENT, r.FORM.NORMAL),
-                               (r.TIME.FUTURE, r.FORM.NORMAL),
-                               (r.GENDER.MASCULINE, r.FORM.NORMAL),
-                               (r.GENDER.NEUTER, r.FORM.NORMAL),
-                               (r.GENDER.FEMININE, r.FORM.NORMAL) ]))
+                               (r.TIME.PAST, r.VERB_FORM.NORMAL),
+                               (r.TIME.PRESENT, r.VERB_FORM.NORMAL),
+                               (r.TIME.FUTURE, r.VERB_FORM.NORMAL),
+                               (r.GENDER.MASCULINE, r.VERB_FORM.NORMAL),
+                               (r.GENDER.NEUTER, r.VERB_FORM.NORMAL),
+                               (r.GENDER.FEMININE, r.VERB_FORM.NORMAL) ]))
 
     def test_get_caches__for_every_word(self):
         caches, inverted_caches = logic.get_caches(restrictions={})

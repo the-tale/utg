@@ -31,7 +31,7 @@ class GENDER(WORD_PROPERTY):
 
 class VERB_FORM(WORD_PROPERTY):
     records = ( ('INFINITIVE', 0, u'инфинитив', u'инф'),
-                ('NORMAL', 1, u'нормальная форма', u'норм'), )
+                ('NORMAL', 1, u'нормальная форма', u'нгл'), )
 
 class VOICE(WORD_PROPERTY):
     records = ( ('ACTIVE', 0, u'активный залог', u'действ'),
@@ -66,6 +66,7 @@ class GRADE(WORD_PROPERTY):
                 ('COMPARATIVE', 1, u'сравнительная степень', u'сравн'),
                 ('SUPERLATIVE', 2, u'превосходная степень', u'прев') )
 
+
 class PRONOUN_CATEGORY(WORD_PROPERTY):
     records = ( ('PERSONAL', 0, u'личное', u'личн'),
                 ('REFLEXIVE', 1, u'возвратное', u'возвр'),
@@ -86,6 +87,9 @@ class INTEGER_FORM(WORD_PROPERTY):
                 ('PLURAL', 3, u'остальные целые', u'цост'),
                 ('MIL_BIL', 4, u'миллион и миллиард', u'цмм'), )
 
+class NOUN_FORM(WORD_PROPERTY):
+    records = ( ('NORMAL', 0, u'нормальная форма', u'нс'),
+                ('COUNTABLE', 1, u'счётная форма', u'счт'))
 
 class ADJECTIVE_FORM(WORD_PROPERTY):
     records = ( ('FULL', 0, u'полная форма', u'полнприл'),
@@ -107,24 +111,20 @@ class PREPOSITION_FORM(WORD_PROPERTY):
 
 
 class WORD_TYPE(WORD_PROPERTY):
-    patches = Column(unique=False, no_index=True)
     schema = Column(unique=False)
     properties = Column(unique=False, no_index=True)
 
-    records = ( ('NOUN', 0, u'существительное', u'сущ', set(['NOUN_COUNTABLE_FORM']), (NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
-                ('ADJECTIVE', 1, u'прилагательное', u'прил', set(), (ADJECTIVE_FORM, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
-                ('PRONOUN', 2, u'местоимение', u'мест', set(), (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', u'гл', set(), (VERB_FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', set(), (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
-                ('INTEGER', 5, u'целое число', u'целое', set(), (), {NUMBER: True, INTEGER_FORM: True},),
-                ('TEXT', 6, u'текст', u'текст', set(), (), {},),
-                ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', set(), (CASE,), {},),
-                # ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', set(), (NUMBER, GENDER), {}),
-                # ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', set(), (NUMBER, GENDER), {ASPECT: True, TIME: True}),
-                ('PREPOSITION', 10, u'предлог', u'предл', set(), (PREPOSITION_FORM,), {}) )
-
-for word_type in WORD_TYPE.records:
-    word_type.patches = set(WORD_TYPE.index_name[name] for name in word_type.patches)
+    records = ( ('NOUN', 0, u'существительное', u'сущ', (NOUN_FORM, NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
+                ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
+                ('PRONOUN', 2, u'местоимение', u'мест', (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
+                ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
+                ('TEXT', 6, u'текст', u'текст', (), {},),
+                # ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', (CASE,), {},),
+                # ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', (NUMBER, GENDER), {}),
+                # ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', (NUMBER, GENDER), {ASPECT: True, TIME: True}),
+                ('PREPOSITION', 10, u'предлог', u'предл', (PREPOSITION_FORM,), {}) )
 
 
 class PROPERTY_TYPE(EnumWithText):
@@ -148,7 +148,8 @@ class PROPERTY_TYPE(EnumWithText):
                 ('VOICE', 15, u'залог', VOICE),
                 ('PREPOSITION_FORM', 16, u'форма предлога', PREPOSITION_FORM),
                 ('ADJECTIVE_FORM', 17, u'форма прилагательного', ADJECTIVE_FORM),
-                ('PARTICIPLE_FORM', 18, u'форма причастия', PARTICIPLE_FORM)
+                ('PARTICIPLE_FORM', 18, u'форма причастия', PARTICIPLE_FORM),
+                ('NOUN_FORM', 19, u'форма существительного', NOUN_FORM)
                 )
 
 # имя числительное;

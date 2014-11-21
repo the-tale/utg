@@ -150,7 +150,7 @@ class TemplateTests(TestCase):
 
 
     def test_substitute(self):
-        TEXT = u'[external_1|загл] 1 [w-ед,тв|external_2|буд] 2 [external_2|тв,ед]'
+        TEXT = u'[external_1|загл] 1 [w-нс,ед,тв|external_2|буд] 2 [external_2|тв,ед]'
 
         # TEXT = u'[external_2|тв,ед]'
 
@@ -168,15 +168,15 @@ class TemplateTests(TestCase):
 
         template.parse(TEXT, externals=['external_1', 'external_2'])
 
-        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-ед,им'),
-                                                'external_2': dictionary.get_word(u'y-мн,им'),},
+        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-нс,ед,им'),
+                                                'external_2': dictionary.get_word(u'y-нс,мн,им'),},
                                     dictionary=dictionary)
 
-        self.assertEqual(result, u'X-ед,им 1 w-мн,им 2 y-мн,тв')
+        self.assertEqual(result, u'X-нс,ед,им 1 w-нс,мн,им 2 y-нс,мн,тв')
 
 
     def test_substitute__percent_symbol(self):
-        TEXT = u'[external_1|загл] 1 [w-ед,тв|external_2|буд] 2% [external_2|тв,ед]'
+        TEXT = u'[external_1|загл] 1 [w-нс,ед,тв|external_2|буд] 2% [external_2|тв,ед]'
 
         # TEXT = u'[external_2|тв,ед]'
 
@@ -194,11 +194,11 @@ class TemplateTests(TestCase):
 
         template.parse(TEXT, externals=['external_1', 'external_2'])
 
-        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-ед,им'),
-                                                'external_2': dictionary.get_word(u'y-мн,им'),},
+        result = template.substitute(externals={'external_1': dictionary.get_word(u'x-нс,ед,им'),
+                                                'external_2': dictionary.get_word(u'y-нс,мн,им'),},
                                     dictionary=dictionary)
 
-        self.assertEqual(result, u'X-ед,им 1 w-мн,им 2% y-мн,тв')
+        self.assertEqual(result, u'X-нс,ед,им 1 w-нс,мн,им 2% y-нс,мн,тв')
 
     def test_get_undictionaried_words(self):
         word_1 = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, prefix='w-', properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
@@ -211,7 +211,7 @@ class TemplateTests(TestCase):
         dictionary.add_word(word_2)
         dictionary.add_word(word_3)
 
-        TEXT = u'[external_1|загл] 1 [x-ед,тв|external_2|буд] 2 [слово|тв,ед] [бла-бла]'
+        TEXT = u'[external_1|загл] 1 [x-нс,ед,тв|external_2|буд] 2 [слово|тв,ед] [бла-бла]'
 
         template = templates.Template()
 

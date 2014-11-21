@@ -1,10 +1,11 @@
 # coding: utf-8
 import random
-import itertools
 
 from utg import relations as r
 from utg import data
 from utg import utils
+from utg import logic
+from utg import exceptions
 
 
 class Properties(object):
@@ -40,6 +41,8 @@ class Properties(object):
             schema = key
 
         value = []
+
+        # apply restrictions
         for property_group in key:
             property = self.get(property_group)
 
@@ -53,6 +56,8 @@ class Properties(object):
                     break
 
             value.append(property)
+
+        logic._populate_key_with_presets(value, key)
 
         return tuple(value)
 
@@ -87,26 +92,29 @@ class Properties(object):
 
 
 class Word(object):
-    __slots__ = ('type', 'forms', 'properties', 'patches', '_lazy__number_of_syllables', '_lazy__has_fluent_vowel')
+    __slots__ = ('type', 'forms', 'properties', '_lazy__number_of_syllables', '_lazy__has_fluent_vowel')
 
-    def __init__(self, type, forms, properties=Properties(), patches=None):
+    def __init__(self, type, forms, properties=Properties()):
+
+        if len(forms) != len(data.WORDS_CACHES[type]):
+            raise exceptions.WrongFormsNumberError(wrong_number=len(forms),
+                                                   expected_number=len(data.WORDS_CACHES[type]),
+                                                   forms=forms)
+
         self.type = type
         self.forms = forms
         self.properties = properties
-        self.patches = {} if patches is None else patches
 
     def serialize(self):
         return {'type': self.type.value,
                 'forms': self.forms,
-                'properties': self.properties.serialize(),
-                'patches': {key.value: patch.serialize() for key, patch in self.patches.iteritems()}}
+                'properties': self.properties.serialize()}
 
     @classmethod
     def deserialize(cls, data):
         return cls(type=r.WORD_TYPE(data['type']),
                    forms=data['forms'],
-                   properties=Properties.deserialize(data['properties']),
-                   patches={r.WORD_TYPE(int(key)): cls.deserialize(patch_data) for key, patch_data in data['patches'].iteritems()})
+                   properties=Properties.deserialize(data['properties']))
 
     def form(self, properties):
         # we must update properties with self.properties
@@ -115,38 +123,19 @@ class Word(object):
 
     def _form(self, properties):
         # here we expected correct full properties
-
-        if (self.type.is_NOUN  and
-            r.WORD_TYPE.NOUN_COUNTABLE_FORM in self.patches and
-            properties.get(r.NUMBER).is_PLURAL and
-            properties.is_specified(r.INTEGER_FORM)):
-            return self.patches[r.WORD_TYPE.NOUN_COUNTABLE_FORM]._form(properties)
-
         return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema)]]
 
     def normal_form(self):
         return self.form(properties=self.properties)
 
-    def all_forms(self, main_word=None):
-
-        if main_word is None:
-            main_word = self
-
-        main_forms = (WordForm(word=main_word, properties=_INVERTED_WORDS_CACHES__PROPERTIES[self.type][i]) for i in xrange(len(self.forms)))
-
-        patches_forms = []
-
-        for patch in self.patches.itervalues():
-            patches_forms.append(patch.all_forms(main_word=main_word))
-
-        return itertools.chain(main_forms, *patches_forms)
+    def all_forms(self):
+        return (WordForm(word=self, properties=_INVERTED_WORDS_CACHES__PROPERTIES[self.type][i]) for i in xrange(len(self.forms)))
 
     def __eq__(self, other):
         return (isinstance(other, Word) and
                 self.type == other.type and
                 self.properties == other.properties and
-                self.forms == other.forms and
-                self.patches == other.patches)
+                self.forms == other.forms)
 
     @classmethod
     def get_forms_number(cls, type):
@@ -162,7 +151,7 @@ class Word(object):
 
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', suffix=u'', only_required=False, properties=None, patches=None):
+    def create_test_word(cls, type, prefix=u'w-', suffix=u'', only_required=False, properties=None):
         keys = cls.get_keys(type)
 
         forms = []
@@ -183,10 +172,7 @@ class Word(object):
 
             properties.update(random.choice(property_type.records))
 
-        if patches is None:
-            patches = {}
-
-        return cls(type=type, forms=forms, properties=properties, patches=patches)
+        return cls(type=type, forms=forms, properties=properties)
 
     @utils.lazy_property
     def number_of_syllables(self):
@@ -198,8 +184,6 @@ class Word(object):
         form = self.forms[0]
         base_vowels = u''.join([char for char in form if char in data.VOWELS])
 
-        # TODO: does we need to check patches forms?
-
         for other_form in self.forms[1:]:
             if not other_form: # form can be unspecified
                 continue
@@ -209,6 +193,22 @@ class Word(object):
                 return True
 
         return False
+
+    def autofill_missed_forms(self):
+        inverted_cache = data.INVERTED_WORDS_CACHES[self.type]
+
+        available_keys = [inverted_cache[index]
+                          for index in xrange(len(self.forms))
+                          if self.forms[index]]
+
+        for i, form in enumerate(self.forms):
+            if form:
+                continue
+
+            nearest_key = logic.get_nearest_key(inverted_cache[i], available_keys)
+
+            self.forms[i] = self.forms[data.WORDS_CACHES[self.type][nearest_key]]
+
 
 
 class WordForm(object):

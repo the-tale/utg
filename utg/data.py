@@ -14,6 +14,7 @@ RESTRICTIONS = { r.VERB_FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD, r.
                  r.ADJECTIVE_CATEGORY.POSSESSIVE: (r.GRADE,),
                  r.ADJECTIVE_FORM.SHORT: (r.CASE, r.ANIMALITY, r.GRADE),
                  r.PARTICIPLE_FORM.SHORT: (r.TIME, r.VOICE, r.CASE, r.ANIMALITY),
+                 r.NOUN_FORM.COUNTABLE: (r.NUMBER,),
                  r.PRONOUN_CATEGORY.REFLEXIVE: (r.NUMBER, r.GENDER, r.PERSON),
                  r.PRONOUN_CATEGORY.INTERROGATIVE: (r.PERSON,),
                  r.PRONOUN_CATEGORY.RELATIVE: (r.NUMBER, r.GENDER, r.PERSON),
@@ -30,6 +31,8 @@ for property, property_groups in RESTRICTIONS.iteritems():
             INVERTED_RESTRICTIONS[property_group] = set()
         INVERTED_RESTRICTIONS[property_group].add(property)
 
+
+PRESETS = {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL}
 
 DEFAULT_PROPERTIES = logic.get_default_properties()
 

@@ -11,6 +11,7 @@ from utg import data
 EXPECTED_ORDER = [ r.VERB_FORM,
                    r.ADJECTIVE_FORM,
                    r.PARTICIPLE_FORM,
+                   r.NOUN_FORM,
 
                    r.ADJECTIVE_CATEGORY,
                    r.PRONOUN_CATEGORY,
@@ -59,6 +60,18 @@ class GeneralTests(TestCase):
         for key, restrictions in data.RESTRICTIONS.iteritems():
             for restriction in restrictions:
                 self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
+
+    def test_presets(self):
+        for preset_owner, preset_slave in data.PRESETS.iteritems():
+            for word_type, cache in data.WORDS_CACHES.iteritems():
+                if preset_owner._relation not in word_type.schema or preset_slave._relation not in word_type.schema:
+                    continue
+
+                for key in cache:
+                    if preset_owner not in key:
+                        continue
+
+                    self.assertIn(preset_slave, key)
 
 
     def test_unique_verbose_ids(self):

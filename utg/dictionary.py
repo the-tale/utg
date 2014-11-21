@@ -26,12 +26,21 @@ class Dictionary(object):
                 self._data[word_form.form] = word_form
                 continue
 
+            if word_form.word.type.value > registered_form.word.type.value:
+                continue
+
             if word_form.word.forms < registered_form.word.forms:
                 self._data[word_form.form] = word_form
                 continue
 
+            if word_form.word.forms > registered_form.word.forms:
+                continue
+
             if word_form.properties.manhattan_distance() < registered_form.properties.manhattan_distance():
                 self._data[word_form.form] = word_form
+                continue
+
+            if word_form.properties.manhattan_distance() > registered_form.properties.manhattan_distance():
                 continue
 
             if word_form is registered_form:
@@ -43,11 +52,11 @@ class Dictionary(object):
     def has_word(self, text):
         return text in self._data
 
-    def get_word(self, text, type=None):
+    def get_word(self, text):
 
         word = self._data.get(text)
 
         if word is None:
-            raise exceptions.NoWordsFoundError(text=text, type=type)
+            raise exceptions.NoWordsFoundError(text=text)
 
         return word

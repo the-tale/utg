@@ -13,6 +13,9 @@ class WordsError(UtgError):
     pass
 
 
+class WrongFormsNumberError(WordsError):
+    MSG = u'constuctor of word receive wrong number of forms (%(wrong_number)s intead of %(expected_number)s), forms are: %(forms)s'
+
 class DuplicateWordError(WordsError):
     MSG = u'duplicate word in dictionary, type: %(type)s, normal form: %(normal_form)s'
 
@@ -29,7 +32,7 @@ class WrongDependencyFormatError(WordsError):
 
 
 class NoWordsFoundError(WordsError):
-    MSG = u'no words found for text="%(text)s" and type=%(type)s'
+    MSG = u'no words found for text="%(text)s"'
 
 
 class MoreThenOneWordFoundError(WordsError):

@@ -18,12 +18,52 @@ class TransformatorsTests(TestCase):
 
 
     def test_noun_integer(self):
+        TESTS = {(r.INTEGER_FORM.SINGULAR,): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.SINGULAR, r.NUMBER.SINGULAR),
+
+                 (r.INTEGER_FORM.DUAL, r.CASE.NOMINATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.DATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.INANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE, r.ANIMALITY.INANIMATE),
+
+                 (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.NOMINATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE),
+                 (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.DATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE),
+                 (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE, r.ANIMALITY.ANIMATE),
+                 (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.INANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE, r.ANIMALITY.INANIMATE),
+
+                 (r.INTEGER_FORM.PLURAL, r.CASE.NOMINATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.PLURAL, r.NUMBER.PLURAL, r.CASE.GENITIVE),
+                 (r.INTEGER_FORM.PLURAL, r.CASE.DATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.PLURAL, r.NUMBER.PLURAL, r.CASE.DATIVE),
+                 (r.INTEGER_FORM.PLURAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.PLURAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.ANIMALITY.ANIMATE),
+                 (r.INTEGER_FORM.PLURAL, r.CASE.ACCUSATIVE, r.ANIMALITY.INANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.PLURAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.ANIMALITY.INANIMATE),
+
+                 (r.INTEGER_FORM.MIL_BIL, r.CASE.NOMINATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.MIL_BIL, r.NUMBER.PLURAL, r.CASE.GENITIVE),
+                 (r.INTEGER_FORM.MIL_BIL, r.CASE.DATIVE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.MIL_BIL, r.NUMBER.PLURAL, r.CASE.GENITIVE),
+                 (r.INTEGER_FORM.MIL_BIL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.MIL_BIL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.ANIMALITY.ANIMATE),
+                 (r.INTEGER_FORM.MIL_BIL, r.CASE.ACCUSATIVE, r.ANIMALITY.INANIMATE): (r.NOUN_FORM.COUNTABLE, r.INTEGER_FORM.MIL_BIL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.ANIMALITY.INANIMATE)
+
+                 }
+
+        for test, result in TESTS.iteritems():
+            self.assertEqual(transformators._noun_integer(words.Properties(*test)),
+                             words.Properties(*result))
+
+
+    def test_adjective_integer(self):
         TESTS = {(r.INTEGER_FORM.SINGULAR,): (r.INTEGER_FORM.SINGULAR, r.NUMBER.SINGULAR),
 
-                 (r.INTEGER_FORM.DUAL, r.CASE.NOMINATIVE): (r.INTEGER_FORM.DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE),
-                 (r.INTEGER_FORM.DUAL, r.CASE.DATIVE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE),
-                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.ACCUSATIVE, r.ANIMALITY.ANIMATE),
-                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.ANIMALITY.INANIMATE): (r.INTEGER_FORM.DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE, r.ANIMALITY.INANIMATE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.NOMINATIVE, r.GENDER.MASCULINE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.GENDER.MASCULINE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.DATIVE, r.GENDER.MASCULINE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE, r.GENDER.MASCULINE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.MASCULINE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.ACCUSATIVE, r.GENDER.MASCULINE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.MASCULINE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.GENDER.MASCULINE),
+
+                 (r.INTEGER_FORM.DUAL, r.CASE.NOMINATIVE, r.GENDER.NEUTER): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.GENDER.NEUTER),
+                 (r.INTEGER_FORM.DUAL, r.CASE.DATIVE, r.GENDER.NEUTER): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE, r.GENDER.NEUTER),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.NEUTER): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.ACCUSATIVE, r.GENDER.NEUTER),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.NEUTER): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.GENITIVE, r.GENDER.NEUTER),
+
+                 (r.INTEGER_FORM.DUAL, r.CASE.NOMINATIVE, r.GENDER.FEMININE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.NOMINATIVE, r.GENDER.FEMININE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.DATIVE, r.GENDER.FEMININE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE, r.GENDER.FEMININE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.FEMININE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.NOMINATIVE, r.GENDER.FEMININE),
+                 (r.INTEGER_FORM.DUAL, r.CASE.ACCUSATIVE, r.GENDER.FEMININE): (r.INTEGER_FORM.DUAL, r.NUMBER.PLURAL, r.CASE.NOMINATIVE, r.GENDER.FEMININE),
 
                  (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.NOMINATIVE): (r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE),
                  (r.INTEGER_FORM.COMPOSITE_DUAL, r.CASE.DATIVE): (r.INTEGER_FORM.COMPOSITE_DUAL, r.NUMBER.PLURAL, r.CASE.DATIVE),
@@ -43,11 +83,7 @@ class TransformatorsTests(TestCase):
                  }
 
         for test, result in TESTS.iteritems():
-            # print '---'
-            # print test
-            # print result
-            # print transformators._noun_integer(words.Properties(*test))._data.values()
-            self.assertEqual(transformators._noun_integer(words.Properties(*test)),
+            self.assertEqual(transformators._adjective_integer(words.Properties(*test)),
                              words.Properties(*result))
 
     def test_noun_integer__unknown_integer_form(self):
@@ -68,18 +104,21 @@ class TransformatorsTests(TestCase):
         pre_3 = self._create_preposition([u'в', u'во'])
         pre_4 = self._create_preposition([u'с', u'со'])
 
-        master_word_1 = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+        master_word_1 = words.Word(type=r.WORD_TYPE.NOUN,
                                    forms=[u'сон', u'сна', u'сну', u'сон', u'сном', u'сне',
+                                          u'сны', u'снов', u'снам', u'сны', u'снами', u'снах',
                                           u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'],
                                    properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
 
-        master_word_2 = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+        master_word_2 = words.Word(type=r.WORD_TYPE.NOUN,
                                    forms=[u'сновидение', u'сновидения', u'сновидению', u'сновидение', u'сновидением', u'сновидении',
+                                          u'сновидения', u'сновидений', u'сновидениям', u'сновидения', u'сновидениями', u'сновидениях',
                                           u'сновидения', u'сновидений', u'сновидениям', u'сновидения', u'сновидениями', u'сновидениях'],
                                    properties=words.Properties(r.GENDER.NEUTER, r.ANIMALITY.INANIMATE))
 
-        master_word_3 = words.Word(type=r.WORD_TYPE.NOUN_COUNTABLE_FORM,
+        master_word_3 = words.Word(type=r.WORD_TYPE.NOUN,
                                    forms=[u'власть', u'власти', u'власти', u'власть', u'властью', u'власти',
+                                          u'', u'', u'', u'', u'', u'',
                                           u'', u'', u'', u'', u'', u''],
                                    properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
 

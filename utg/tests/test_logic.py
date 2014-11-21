@@ -1,7 +1,8 @@
 # coding: utf-8
 
-
 from unittest import TestCase
+
+import mock
 
 from utg import relations as r
 from utg import logic
@@ -32,6 +33,7 @@ class LogicTests(TestCase):
                           r.MOOD.INDICATIVE,
                           r.INTEGER_FORM.SINGULAR,
                           r.PREPOSITION_FORM.NORMAL,
+                          r.NOUN_FORM.NORMAL,
                           None])
 
         self.assertEqual(set(logic.get_default_properties().values()),
@@ -160,3 +162,86 @@ class LogicTests(TestCase):
                            (r.NUMBER.SINGULAR, r.CASE.INSTRUMENTAL),
                            (r.NUMBER.SINGULAR, r.CASE.PREPOSITIONAL),
                            (r.NUMBER.PLURAL, None) ] )
+
+
+    def test_get_nearest_key(self):
+        available_keys = [(None, None, None),
+                          (r.CASE.DATIVE, r.GENDER.MASCULINE, r.NUMBER.SINGULAR),
+                          (r.CASE.DATIVE, None, r.NUMBER.PLURAL),
+                          (None, r.GENDER.MASCULINE, None),]
+
+        expected = {(None, r.GENDER.FEMININE, None): (None, None, None),
+                    (None, r.GENDER.MASCULINE, r.NUMBER.PLURAL): (None, r.GENDER.MASCULINE, None),
+                    (r.CASE.DATIVE, r.GENDER.FEMININE, r.NUMBER.SINGULAR): (r.CASE.DATIVE, r.GENDER.MASCULINE, r.NUMBER.SINGULAR)}
+
+        for key, expected_key in expected.iteritems():
+            self.assertEqual(logic.get_nearest_key(key, available_keys), expected_key)
+
+
+    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    def test_populate_key_with_presets(self):
+
+        schema = (r.NOUN_FORM, r.CASE, r.NUMBER)
+
+        expected = {(None, None, None): [None, None, None],
+                    (r.NOUN_FORM.NORMAL, None, None): [r.NOUN_FORM.NORMAL, None, None],
+                    (r.NOUN_FORM.NORMAL, None, r.NUMBER.SINGULAR): [r.NOUN_FORM.NORMAL, None, r.NUMBER.SINGULAR],
+                    (r.NOUN_FORM.COUNTABLE, None, None): [r.NOUN_FORM.COUNTABLE, None, r.NUMBER.PLURAL],
+                    (r.NOUN_FORM.COUNTABLE, None, r.NUMBER.SINGULAR): [r.NOUN_FORM.COUNTABLE, None, r.NUMBER.PLURAL],
+                    (None, None, r.NUMBER.SINGULAR): [None, None, r.NUMBER.SINGULAR],
+                    (None, None, r.NUMBER.PLURAL): [None, None, r.NUMBER.PLURAL],
+
+                    (r.NOUN_FORM.COUNTABLE, r.CASE.DATIVE, None): [r.NOUN_FORM.COUNTABLE, r.CASE.DATIVE, r.NUMBER.PLURAL],
+                    (None, r.CASE.DATIVE, r.NUMBER.SINGULAR): [None, r.CASE.DATIVE, r.NUMBER.SINGULAR],
+                    }
+
+        for key, result in expected.iteritems():
+            key_to_process = list(key)
+            self.assertEqual(logic._populate_key_with_presets(key_to_process, schema), None)
+            self.assertEqual(key_to_process, result)
+
+
+
+    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    def test_populate_key_with_presets__without_owner(self):
+
+        schema = (r.VERB_FORM, r.CASE, r.NUMBER)
+
+        expected = {(None, None, None): [None, None, None],
+                    (r.VERB_FORM.NORMAL, None, None): [r.VERB_FORM.NORMAL, None, None],
+                    (r.VERB_FORM.NORMAL, None, r.NUMBER.SINGULAR): [r.VERB_FORM.NORMAL, None, r.NUMBER.SINGULAR],
+                    (r.VERB_FORM.INFINITIVE, None, None): [r.VERB_FORM.INFINITIVE, None, None],
+                    (r.VERB_FORM.INFINITIVE, None, r.NUMBER.SINGULAR): [r.VERB_FORM.INFINITIVE, None, r.NUMBER.SINGULAR],
+                    (None, None, r.NUMBER.SINGULAR): [None, None, r.NUMBER.SINGULAR],
+                    (None, None, r.NUMBER.PLURAL): [None, None, r.NUMBER.PLURAL],
+
+                    (r.VERB_FORM.INFINITIVE, r.CASE.DATIVE, None): [r.VERB_FORM.INFINITIVE, r.CASE.DATIVE, None],
+                    (None, r.CASE.DATIVE, r.NUMBER.SINGULAR): [None, r.CASE.DATIVE, r.NUMBER.SINGULAR],
+                    }
+
+        for key, result in expected.iteritems():
+            key_to_process = list(key)
+            self.assertEqual(logic._populate_key_with_presets(key_to_process, schema), None)
+            self.assertEqual(key_to_process, result)
+
+
+    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    def test_populate_key_with_presets__without_slave(self):
+
+        schema = (r.NOUN_FORM, r.CASE, r.GENDER)
+
+        expected = {(None, None, None): [None, None, None],
+                    (r.NOUN_FORM.NORMAL, None, None): [r.NOUN_FORM.NORMAL, None, None],
+                    (r.NOUN_FORM.NORMAL, None, r.GENDER.MASCULINE): [r.NOUN_FORM.NORMAL, None, r.GENDER.MASCULINE],
+                    (r.NOUN_FORM.COUNTABLE, None, None): [r.NOUN_FORM.COUNTABLE, None, None],
+                    (r.NOUN_FORM.COUNTABLE, None, r.GENDER.FEMININE): [r.NOUN_FORM.COUNTABLE, None, r.GENDER.FEMININE],
+                    (None, None, r.GENDER.MASCULINE): [None, None, r.GENDER.MASCULINE],
+
+                    (r.NOUN_FORM.COUNTABLE, r.CASE.DATIVE, None): [r.NOUN_FORM.COUNTABLE, r.CASE.DATIVE, None],
+                    (None, r.CASE.DATIVE, r.GENDER.FEMININE): [None, r.CASE.DATIVE, r.GENDER.FEMININE],
+                    }
+
+        for key, result in expected.iteritems():
+            key_to_process = list(key)
+            self.assertEqual(logic._populate_key_with_presets(key_to_process, schema), None)
+            self.assertEqual(key_to_process, result)

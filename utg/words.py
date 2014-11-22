@@ -22,7 +22,8 @@ class Properties(object):
     @classmethod
     def deserialize(cls, data):
         return cls(*[r.PROPERTY_TYPE(int(property_type)).relation(property_value)
-                     for property_type, property_value in data.iteritems()])
+                     for property_type, property_value in data.iteritems()
+                     if int(property_type) in r.PROPERTY_TYPE.index_value]) # ignore not actual properties
 
     def _update(self, *argv):
         for property in argv:
@@ -37,10 +38,12 @@ class Properties(object):
 
 
     def get_key(self, key, schema=None):
+
         if schema is None:
             schema = key
 
         value = []
+        removed = set()
 
         # apply restrictions
         for property_group in key:
@@ -51,7 +54,8 @@ class Properties(object):
                 if p._relation not in schema:
                     continue
 
-                if self.get(p._relation) == p:
+                if self.get(p._relation) == p and p not in removed: # TODO: test "removed" chech
+                    removed.add(property)
                     property = None
                     break
 
@@ -60,6 +64,26 @@ class Properties(object):
         logic._populate_key_with_presets(value, key)
 
         return tuple(value)
+
+
+    # def get_key(self, key, keys):
+
+    #     samples = set(self.get(property_group) for property_group in key)
+
+    #     samples.add(None)
+
+    #     print '-------------'
+    #     print samples
+    #     print
+
+    #     for candidate_key in keys:
+    #         print candidate_key
+    #         if all(candidate_property in samples for candidate_property in candidate_key):
+    #             return candidate_key
+
+    #     # TODO: raise exception here
+    #     raise Exception('!')
+
 
     def get(self, property_group):
         if property_group in self._data:
@@ -124,6 +148,7 @@ class Word(object):
     def _form(self, properties):
         # here we expected correct full properties
         return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema)]]
+        # return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema, keys=data.INVERTED_WORDS_CACHES[self.type])]]
 
     def normal_form(self):
         return self.form(properties=self.properties)

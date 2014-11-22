@@ -134,8 +134,8 @@ class DictionaryTests(TestCase):
                           'x2': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
                           'x3': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR)),
                           'y1': words.WordForm(word_2, properties=word_2.properties.clone(r.VERB_FORM.INFINITIVE)),
-                          'y3': words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.MASCULINE, r.VERB_FORM.NORMAL,
-                                                                                          r.TIME.PAST, r.MOOD.CONDITIONAL, r.NUMBER.SINGULAR))})
+                          'y3': words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE,
+                                                                                          r.TIME.PAST, r.NUMBER.SINGULAR))})
 
 
     def test_add_word__duplicates_in_defferent_words__inverse_add(self):
@@ -154,8 +154,8 @@ class DictionaryTests(TestCase):
                           'x2': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
                           'x3': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR)),
                           'y1': words.WordForm(word_2, properties=word_2.properties.clone(r.VERB_FORM.INFINITIVE)),
-                          'y3': words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.MASCULINE, r.VERB_FORM.NORMAL,
-                                                                                          r.TIME.PAST, r.MOOD.CONDITIONAL, r.NUMBER.SINGULAR))})
+                          'y3': words.WordForm(word_2, properties=word_2.properties.clone(r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE,
+                                                                                          r.TIME.PAST, r.NUMBER.SINGULAR))})
 
 
     def test_get_word(self):
@@ -171,7 +171,7 @@ class DictionaryTests(TestCase):
         properties_1_3 = words.Properties(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR)
 
         properties_2_1 = words.Properties(r.VERB_FORM.INFINITIVE)
-        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.MASCULINE, r.MOOD.CONDITIONAL, r.VERB_FORM.NORMAL)
+        properties_2_3 = words.Properties(r.TIME.PAST, r.NUMBER.SINGULAR, r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE)
 
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
@@ -189,6 +189,16 @@ class DictionaryTests(TestCase):
 
         word_2 = words.Word.create_test_word(type=r.WORD_TYPE.VERB)
         word_2.forms[:3] = ['y1', 'x2', 'y3']
+
+        # from utg import data
+
+        # print 'schema: ', r.WORD_TYPE.VERB.schema
+
+        # keys = data.WORDS_CACHES[r.WORD_TYPE.VERB].keys()
+
+        # keys = [k for k in keys if k[0].is_IMPERATIVE]
+
+        # print u'\n'.join('%r' % (key, ) for key in keys)
 
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)

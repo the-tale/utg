@@ -31,11 +31,13 @@ class GENDER(WORD_PROPERTY):
 
 class VERB_FORM(WORD_PROPERTY):
     records = ( ('INFINITIVE', 0, u'инфинитив', u'инф'),
-                ('NORMAL', 1, u'нормальная форма', u'нгл'), )
+                ('INDICATIVE', 1, u'изъявительное наклонение', u'изъяв'),
+                ('CONDITIONAL', 2, u'согласительное наклонение', u'согл'),
+                ('IMPERATIVE', 3, u'повелительное наклонение', u'пов') )
 
 class VOICE(WORD_PROPERTY):
-    records = ( ('ACTIVE', 0, u'активный залог', u'действ'),
-                ('PASSIVE', 1, u'пассивный залог', u'страд')  )
+    records = ( ('DIRECT', 0, u'прямой залог', u'прям'),
+                ('REVERSE', 1, u'возвратный залог', u'взв')  )
 
 class TIME(WORD_PROPERTY):
     records = ( ('PAST', 1, u'прошлое время', u'прш'),
@@ -50,11 +52,6 @@ class PERSON(WORD_PROPERTY):
 class ASPECT(WORD_PROPERTY):
     records = ( ('IMPERFECTIVE', 0, u'несовершенный', u'несов'),
                 ('PERFECTIVE', 1, u'совершенный', u'сов') )
-
-class MOOD(WORD_PROPERTY):
-    records = ( ('INDICATIVE', 0, u'изъявительное наклонение', u'изъяв'),
-                ('CONDITIONAL', 1, u'согласительное наклонение', u'согл'),
-                ('IMPERATIVE', 2, u'повелительное наклонение', u'пов') )
 
 class ADJECTIVE_CATEGORY(WORD_PROPERTY):
     records = ( ('QUALITY', 0, u'качественное', u'кач'),
@@ -117,7 +114,7 @@ class WORD_TYPE(WORD_PROPERTY):
     records = ( ('NOUN', 0, u'существительное', u'сущ', (NOUN_FORM, NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
                 ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
-                ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER, MOOD), {ASPECT: True, VOICE: True}),
+                ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER), {ASPECT: True, VOICE: True}),
                 ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
                 ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', (), {},),
@@ -138,7 +135,7 @@ class PROPERTY_TYPE(EnumWithText):
                 ('TIME', 5, u'время', TIME),
                 ('PERSON', 6, u'лицо', PERSON),
                 ('ASPECT', 7, u'вид', ASPECT),
-                ('MOOD', 8, u'наклонение', MOOD),
+                # ('MOOD', 8, u'наклонение', MOOD),
                 ('ADJECTIVE_CATEGORY', 9, u'категория прилагательного', ADJECTIVE_CATEGORY),
                 ('GRADE', 10, u'степень прилагательного', GRADE),
                 ('PRONOUN_CATEGORY', 11, u'категория местоимения', PRONOUN_CATEGORY),
@@ -154,7 +151,6 @@ class PROPERTY_TYPE(EnumWithText):
 
 # имя числительное;
 # наречие;
-# предлог;
 # союз;
 # частица;
 # междометие;

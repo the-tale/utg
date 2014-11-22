@@ -30,7 +30,6 @@ class LogicTests(TestCase):
                           r.ADJECTIVE_CATEGORY.QUALITY,
                           r.NUMBER.SINGULAR,
                           r.ASPECT.IMPERFECTIVE,
-                          r.MOOD.INDICATIVE,
                           r.INTEGER_FORM.SINGULAR,
                           r.PREPOSITION_FORM.NORMAL,
                           r.NOUN_FORM.NORMAL,
@@ -61,13 +60,30 @@ class LogicTests(TestCase):
                         r.VERB_FORM.INFINITIVE: [r.CASE]}
 
         expected = [ [r.GENDER.MASCULINE, None, None],
+
                      [r.GENDER.NEUTER, r.VERB_FORM.INFINITIVE, None],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.NOMINATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.GENITIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.DATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.ACCUSATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.INSTRUMENTAL],
-                     [r.GENDER.NEUTER, r.VERB_FORM.NORMAL, r.CASE.PREPOSITIONAL],
+
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.NOMINATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.GENITIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.DATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.ACCUSATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.INSTRUMENTAL],
+                     [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.PREPOSITIONAL],
+
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.NOMINATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.GENITIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.DATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.ACCUSATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.INSTRUMENTAL],
+                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.PREPOSITIONAL],
+
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.NOMINATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.GENITIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.DATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.ACCUSATIVE],
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.INSTRUMENTAL],
+                     [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.PREPOSITIONAL],
+
                      [r.GENDER.FEMININE, None, r.CASE.NOMINATIVE],
                      [r.GENDER.FEMININE, None, r.CASE.GENITIVE],
                      [r.GENDER.FEMININE, None, r.CASE.DATIVE],
@@ -79,16 +95,16 @@ class LogicTests(TestCase):
                          expected)
 
     def test__get_full_restrictions(self):
-        restrictions = {r.VERB_FORM.NORMAL: (r.TIME, r.GENDER),
+        restrictions = {r.VERB_FORM.INDICATIVE: (r.TIME, r.GENDER),
                         r.GENDER.MASCULINE: (r.TIME,)}
 
         self.assertEqual(logic._get_full_restrictions(restrictions),
-                         set([ (r.VERB_FORM.NORMAL, r.TIME.PAST),
-                               (r.VERB_FORM.NORMAL, r.TIME.PRESENT),
-                               (r.VERB_FORM.NORMAL, r.TIME.FUTURE),
-                               (r.VERB_FORM.NORMAL, r.GENDER.MASCULINE),
-                               (r.VERB_FORM.NORMAL, r.GENDER.NEUTER),
-                               (r.VERB_FORM.NORMAL, r.GENDER.FEMININE),
+                         set([ (r.VERB_FORM.INDICATIVE, r.TIME.PAST),
+                               (r.VERB_FORM.INDICATIVE, r.TIME.PRESENT),
+                               (r.VERB_FORM.INDICATIVE, r.TIME.FUTURE),
+                               (r.VERB_FORM.INDICATIVE, r.GENDER.MASCULINE),
+                               (r.VERB_FORM.INDICATIVE, r.GENDER.NEUTER),
+                               (r.VERB_FORM.INDICATIVE, r.GENDER.FEMININE),
 
                                (r.GENDER.MASCULINE, r.TIME.PAST),
                                (r.GENDER.MASCULINE, r.TIME.PRESENT),
@@ -98,12 +114,12 @@ class LogicTests(TestCase):
                                (r.TIME.PRESENT, r.GENDER.MASCULINE),
                                (r.TIME.FUTURE, r.GENDER.MASCULINE),
 
-                               (r.TIME.PAST, r.VERB_FORM.NORMAL),
-                               (r.TIME.PRESENT, r.VERB_FORM.NORMAL),
-                               (r.TIME.FUTURE, r.VERB_FORM.NORMAL),
-                               (r.GENDER.MASCULINE, r.VERB_FORM.NORMAL),
-                               (r.GENDER.NEUTER, r.VERB_FORM.NORMAL),
-                               (r.GENDER.FEMININE, r.VERB_FORM.NORMAL) ]))
+                               (r.TIME.PAST, r.VERB_FORM.INDICATIVE),
+                               (r.TIME.PRESENT, r.VERB_FORM.INDICATIVE),
+                               (r.TIME.FUTURE, r.VERB_FORM.INDICATIVE),
+                               (r.GENDER.MASCULINE, r.VERB_FORM.INDICATIVE),
+                               (r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE),
+                               (r.GENDER.FEMININE, r.VERB_FORM.INDICATIVE) ]))
 
     def test_get_caches__for_every_word(self):
         caches, inverted_caches = logic.get_caches(restrictions={})
@@ -208,8 +224,8 @@ class LogicTests(TestCase):
         schema = (r.VERB_FORM, r.CASE, r.NUMBER)
 
         expected = {(None, None, None): [None, None, None],
-                    (r.VERB_FORM.NORMAL, None, None): [r.VERB_FORM.NORMAL, None, None],
-                    (r.VERB_FORM.NORMAL, None, r.NUMBER.SINGULAR): [r.VERB_FORM.NORMAL, None, r.NUMBER.SINGULAR],
+                    (r.VERB_FORM.INDICATIVE, None, None): [r.VERB_FORM.INDICATIVE, None, None],
+                    (r.VERB_FORM.INDICATIVE, None, r.NUMBER.SINGULAR): [r.VERB_FORM.INDICATIVE, None, r.NUMBER.SINGULAR],
                     (r.VERB_FORM.INFINITIVE, None, None): [r.VERB_FORM.INFINITIVE, None, None],
                     (r.VERB_FORM.INFINITIVE, None, r.NUMBER.SINGULAR): [r.VERB_FORM.INFINITIVE, None, r.NUMBER.SINGULAR],
                     (None, None, r.NUMBER.SINGULAR): [None, None, r.NUMBER.SINGULAR],

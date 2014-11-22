@@ -26,7 +26,6 @@ EXPECTED_ORDER = [ r.VERB_FORM,
 
                    r.ANIMALITY,
                    r.GRADE,
-                   r.MOOD,
 
                    r.INTEGER_FORM,
 

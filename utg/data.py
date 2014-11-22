@@ -5,10 +5,12 @@ from utg import relations as r
 
 VERBOSE_TO_PROPERTIES = logic.get_verbose_to_relations()
 
-RESTRICTIONS = { r.VERB_FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.MOOD, r.GENDER),
+RESTRICTIONS = { r.VERB_FORM.INFINITIVE: (r.TIME, r.PERSON, r.NUMBER, r.GENDER),
+                 r.VERB_FORM.CONDITIONAL: (r.TIME, r.PERSON,),
+                 r.VERB_FORM.IMPERATIVE: (r.TIME, r.GENDER,),
                  r.NUMBER.PLURAL: (r.GENDER,),
                  r.TIME.PAST: (r.PERSON, ),
-                 r.TIME.PRESENT: (r.GENDER, r.MOOD),
+                 r.TIME.PRESENT: (r.GENDER,),
                  r.TIME.FUTURE: (r.GENDER,),
                  r.ADJECTIVE_CATEGORY.RELATIVE: (r.GRADE,),
                  r.ADJECTIVE_CATEGORY.POSSESSIVE: (r.GRADE,),

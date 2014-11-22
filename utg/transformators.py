@@ -60,16 +60,16 @@ def _noun_integer(properties, slave_word=None, master_form=None):
     # Числительное один (одна, одно) согласуется с существительным в роде, числе и падеже
     # (ср.: один день, одним днем, в одну неделю и т.д.).
     if integer_form.is_SINGULAR:
-        return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR)
+        return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR)
 
     # Числительные два, три, четыре в форме И.п. (и В. п. при неодушевленных существительных)
     # управляют формой Р.п. единственного числа существительных: два дня, два товарища, три окна.
     # В остальных падежах эти числительные согласуются с существительными во множественном числе:
     if integer_form.is_DUAL:
         if case.is_NOMINATIVE:
-            return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
         if case.is_ACCUSATIVE and animality.is_INANIMATE:
-            return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
         return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.PLURAL)
 
     # Составные числительные, оканчивающиеся на два, три, четыре, управляют в И.п. и В.п. формой Р.п. единственного числа существительных
@@ -77,9 +77,9 @@ def _noun_integer(properties, slave_word=None, master_form=None):
     # В остальных падежах эти числительные согласуются с существительными во множественном числе.
     if integer_form.is_COMPOSITE_DUAL:
         if case.is_NOMINATIVE:
-            return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
         if case.is_ACCUSATIVE:
-            return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR, r.CASE.GENITIVE)
         return properties.clone(r.NOUN_FORM.COUNTABLE, r.NUMBER.PLURAL)
 
     # Названные составные числительные не сочетаются с существительными, употребляемыми только во множественном числе.

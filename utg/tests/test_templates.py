@@ -56,6 +56,11 @@ class SubstitutionTests(TestCase):
         substitution = templates.Substitution.parse(variable=u'[bla-bla|гл]', externals=[''])
         self.assertEqual(substitution.dependencies, [words.Properties(r.WORD_TYPE.VERB)])
 
+    def test_parse__upper_case(self):
+        substitution = templates.Substitution.parse(variable=u'[Bla-bla]', externals=[''])
+        self.assertEqual(substitution.id, 'bla-bla')
+        self.assertEqual(substitution.dependencies, [words.Properties(r.WORD_CASE.UPPER)])
+
 
     def test_merge_properties__no_dependencies(self):
         substitution = templates.Substitution.parse(variable=u'[bla-bla]', externals=[])

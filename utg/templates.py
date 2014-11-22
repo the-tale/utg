@@ -6,6 +6,7 @@ from utg import exceptions
 from utg import words
 from utg import data
 from utg import transformators
+from utg import relations as r
 
 
 _VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
@@ -32,7 +33,7 @@ class Substitution(object):
 
     @classmethod
     def parse(cls, variable, externals):
-        slugs = variable[1:-1].lower().split('|')
+        slugs = variable[1:-1].split('|')
 
         if not slugs[0]:
             raise exceptions.WrongDependencyFormatError(dependency=variable)
@@ -42,11 +43,16 @@ class Substitution(object):
         s.id = slugs[0].strip()
 
         for slug in slugs[1:]:
-            slug = slug.strip()
+            slug = slug.lower().strip()
             if slug in externals:
                 s.dependencies.append(slug)
             else:
                 s.dependencies.append(cls.parse_properties(slug))
+
+        if s.id[0].isupper():
+            s.dependencies.append(words.Properties(r.WORD_CASE.UPPER))
+
+        s.id = s.id.lower()
 
         return s
 

@@ -21,7 +21,7 @@ class LogicTests(TestCase):
                           r.ADJECTIVE_FORM.FULL,
                           r.PARTICIPLE_FORM.FULL,
                           r.TIME.PAST,
-                          r.VOICE.ACTIVE,
+                          r.VOICE.DIRECT,
                           r.PRONOUN_CATEGORY.PERSONAL,
                           r.WORD_CASE.LOWER,
                           r.ANIMALITY.ANIMATE,

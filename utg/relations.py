@@ -104,7 +104,8 @@ class WORD_CASE(WORD_PROPERTY):
 
 class PREPOSITION_FORM(WORD_PROPERTY):
     records = ( ('NORMAL', 0, u'основная форма', u'осн'),
-                ('ALTERNATIVE', 1, u'альтернативная форма', u'алт') )
+                ('ALTERNATIVE', 1, u'альтернативная форма', u'алт'),
+                ('SPECIAL', 2, u'специальная форма', u'спц') )
 
 
 class WORD_TYPE(WORD_PROPERTY):

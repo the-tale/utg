@@ -46,3 +46,5 @@ RAW_WORDS_CACHES = logic.get_raw_caches(INVERTED_WORDS_CACHES)
 
 CONSONANTS = set(u'бвгджзйклмнпрстфхцчшщъьБВГДЖЗЙКЛМНПРСТФХЦЧШЩЪЬ')
 VOWELS = set(u'аеёиоуыэюяАЕЁИОУЫЭЮЯ')
+J_VOWELS = set(u'еёюяЕЁЮЯ')
+NOT_J_VOWELS = VOWELS - J_VOWELS

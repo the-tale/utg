@@ -15,17 +15,24 @@ def transform(slave_word, slave_propeties, master_form):
     return slave_propeties
 
 
-def _any_preposition(properties, slave_word, master_form):
+def _preposition_any(properties, slave_word, master_form):
     # http://newforum.gramota.ru/viewtopic.php?f=3&t=1045
 
     # В условиях контекста возможны дублеты типа в введении – во введении.
     # Добавление гласного о к предлогу, состоящему из одного согласного звука или оканчивающемуся на согласный, наблюдается в ряде случаев:
 
     slave = slave_word.normal_form()
-    master = master_form.form
 
-    if slave[-1] not in data.CONSONANTS:
-        return properties
+    if slave[-1] in data.CONSONANTS:
+        return _consonant_preposition_any(slave, properties, slave_word, master_form)
+
+    return _vowels_preposition_any(slave, properties, slave_word, master_form)
+
+
+def _consonant_preposition_any(slave, properties, slave_word, master_form):
+    # http://newforum.gramota.ru/viewtopic.php?f=3&t=1045
+
+    master = master_form.form
 
     # 1) перед односложным словом, начинающимся со стечения согласных, с беглым гласным в корне,
     #    например: во сне (ср.: в сновидениях), во рту (ср.: в ртутных испарениях), во льну (ср.: в льнотеребилках), ко мне (ср.: к мнимой величине);
@@ -35,7 +42,9 @@ def _any_preposition(properties, slave_word, master_form):
         return properties.clone(r.PREPOSITION_FORM.ALTERNATIVE)
 
     # 2) часто после предлогов в и с, если с этих же согласных начинается последующее стечение согласных, например: во власти, во внушении, со слезами, со словами, со страху;
-    if slave in (u'в', u'с') and slave == master[0]:
+    if (slave in (u'в', u'с') and
+        slave == master[0] and
+        master_form.starts_with_consonant_cluster):
         return properties.clone(r.PREPOSITION_FORM.ALTERNATIVE)
 
     # 3) в отдельных фразеологических выражениях, например: во сто крат, изо всех сил, во главе войск, как кур во щи;
@@ -48,6 +57,30 @@ def _any_preposition(properties, slave_word, master_form):
     # NotImplemented
 
     return properties
+
+
+def _vowels_preposition_any(slave, properties, slave_word, master_form):
+    # http://russ.hashcode.ru/questions/33493/правописание-предлог-об-и-обо
+
+    master = master_form.form
+
+    # Прелоги ОБО используется в особых случаях,
+    # а именно с некоторыми местоимениями: обо мне, обо всех, обо всём (П.п.), обо что (В.п.), но: о тебе, о других, о чём.
+    # Это традиционный принцип. Возможно, эти исключения связаны с влиянием беглых гласных, например: меня - обо мне (вместо "об мене"), сравнить: тебя - о тебе.
+    if ( slave == u'о' and
+         master in (u'всех', u'мне', u'всём', u'что', u'всей')):
+        return properties.clone(r.PREPOSITION_FORM.SPECIAL)
+
+    # Если существительное начинается на гласную (кроме йотированных), то пишем ОБ: сообщить об отъезде, удариться об асфальт. Это фонетический принцип.
+    if master[0] in data.NOT_J_VOWELS:
+        return properties.clone(r.PREPOSITION_FORM.ALTERNATIVE)
+
+    # Прелоги участвуют в управлении В.п. или П.п. Для В.п. характерен предлог ОБ: удариться об дерево, об стену,
+    # а для П.п. - предлог О: думать о дереве, о стене. Это грамматический принцип.
+    # TODO
+
+    return properties
+
 
 
 def _noun_integer(properties, slave_word=None, master_form=None):
@@ -182,4 +215,4 @@ _TRANSFORMATORS = {(r.WORD_TYPE.NOUN, r.WORD_TYPE.INTEGER): _noun_integer,
                    (r.WORD_TYPE.PARTICIPLE, r.WORD_TYPE.INTEGER): _adjective_integer}
 
 for word_type in r.WORD_TYPE.records:
-    _TRANSFORMATORS[(r.WORD_TYPE.PREPOSITION, word_type)] = _any_preposition
+    _TRANSFORMATORS[(r.WORD_TYPE.PREPOSITION, word_type)] = _preposition_any

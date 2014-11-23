@@ -30,6 +30,7 @@ def get_verbose_to_relations():
 
 
 def _keys_generator(left, right, restrictions):
+    from utg.data import PRESETS
 
     if not right:
         yield []
@@ -37,6 +38,14 @@ def _keys_generator(left, right, restrictions):
 
     central, right = right[0], right[1:]
 
+    # if property is in preset
+    for preset_owner, preset_slave in PRESETS.iteritems():
+        if preset_slave._relation == central and preset_owner in left:
+            for tail in _keys_generator(left + [preset_slave], right, restrictions):
+                yield [preset_slave] + tail
+            return
+
+    # if property in restrictions
     for used_property in left:
         if used_property in restrictions and central in restrictions[used_property]:
             for tail in _keys_generator(left + [None], right, restrictions):
@@ -50,24 +59,11 @@ def _keys_generator(left, right, restrictions):
     return
 
 
-def _get_full_restrictions(restrictions):
-    full_restrictions = set()
-
-    for property_1, groups in restrictions.iteritems():
-        for group in groups:
-            for property_2 in group.records:
-                full_restrictions.add((property_1, property_2))
-                full_restrictions.add((property_2, property_1))
-
-    return full_restrictions
-
-
-def _get_caches(schema, restrictions):
+def _get_cache(schema, restrictions):
     cache = {}
     inverted_cache = []
 
     for i, key in enumerate(_keys_generator([], schema, restrictions=restrictions)):
-        _populate_key_with_presets(key, schema)
         cache[tuple(key)] = i
         inverted_cache.append(tuple(key))
 
@@ -100,7 +96,7 @@ def get_caches(restrictions):
     inverted_caches = {}
 
     for word in r.WORD_TYPE.records:
-        cache, inverted_cache = _get_caches(word.schema, restrictions)
+        cache, inverted_cache = _get_cache(word.schema, restrictions)
 
         caches[word] = cache
         inverted_caches[word] = inverted_cache
@@ -124,3 +120,53 @@ def get_nearest_key(key, available_keys):
             best_key = available_key
 
     return best_key
+
+
+def _raw_keys_generator(left, key, schema):
+    from utg.data import PRESETS
+
+    if not key:
+        yield []
+        return
+
+    schema_head, schema_tail = schema[0], schema[1:]
+    key_head, key_tail = key[0], key[1:]
+
+    # if head is in preset
+    for preset_owner, preset_slave in PRESETS.iteritems():
+        if preset_slave == key_head and preset_owner in left:
+            key_head = None
+            break
+
+
+    if key_head is not None:
+        for tail in _raw_keys_generator(left + [key_head], key_tail, schema_tail):
+            yield [key_head] + tail
+        return
+
+    for head in schema_head.records:
+        for tail in _raw_keys_generator(left + [head], key_tail, schema_tail):
+            yield [head] + tail
+
+    return
+
+
+def _get_raw_cache(keys, schema):
+    cache = {}
+
+    for index, key in enumerate(keys):
+        for raw_key in _raw_keys_generator([], key, schema):
+            cache[tuple(raw_key)] = index
+
+    return cache
+
+
+def get_raw_caches(inverted_caches):
+    caches = {}
+
+    for word_type in r.WORD_TYPE.records:
+        cache = _get_raw_cache(inverted_caches[word_type], word_type.schema)
+
+        caches[word_type] = cache
+
+    return caches

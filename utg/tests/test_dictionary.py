@@ -190,16 +190,6 @@ class DictionaryTests(TestCase):
         word_2 = words.Word.create_test_word(type=r.WORD_TYPE.VERB)
         word_2.forms[:3] = ['y1', 'x2', 'y3']
 
-        # from utg import data
-
-        # print 'schema: ', r.WORD_TYPE.VERB.schema
-
-        # keys = data.WORDS_CACHES[r.WORD_TYPE.VERB].keys()
-
-        # keys = [k for k in keys if k[0].is_IMPERATIVE]
-
-        # print u'\n'.join('%r' % (key, ) for key in keys)
-
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
 

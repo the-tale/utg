@@ -61,15 +61,8 @@ class PropertiesTests(TestCase):
 
     def test_get_key(self):
         properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.GENDER.FEMININE)
-        self.assertEqual(properties.get_key(key=[]), ())
-        self.assertEqual(properties.get_key(key=(r.TIME, r.CASE, r.GENDER)), (r.TIME.PAST, r.CASE.DATIVE, r.GENDER.FEMININE))
-
-    def test_get_key__restrictions(self):
-        properties = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND, r.GENDER.FEMININE)
-        schema = (r.TIME, r.CASE, r.GENDER, r.PERSON)
-        key = (r.CASE, r.GENDER, r.PERSON)
-        self.assertEqual(properties.get_key(schema=schema, key=key),
-                         (r.CASE.DATIVE, r.GENDER.FEMININE, None))
+        self.assertEqual(properties.get_raw_key(()), ())
+        self.assertEqual(properties.get_raw_key((r.TIME, r.CASE, r.GENDER)), (r.TIME.PAST, r.CASE.DATIVE, r.GENDER.FEMININE))
 
     def test_eq(self):
         properties_1 = words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL, r.PERSON.SECOND)

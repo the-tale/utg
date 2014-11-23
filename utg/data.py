@@ -32,7 +32,7 @@ for property, property_groups in RESTRICTIONS.iteritems():
         if property_group not in INVERTED_RESTRICTIONS:
             INVERTED_RESTRICTIONS[property_group] = set()
         INVERTED_RESTRICTIONS[property_group].add(property)
-
+INVERTED_RESTRICTIONS = {k: frozenset(v) for k, v in INVERTED_RESTRICTIONS.items()}
 
 PRESETS = {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL}
 
@@ -40,6 +40,8 @@ DEFAULT_PROPERTIES = logic.get_default_properties()
 
 
 WORDS_CACHES, INVERTED_WORDS_CACHES = logic.get_caches(restrictions=RESTRICTIONS)
+
+RAW_WORDS_CACHES = logic.get_raw_caches(INVERTED_WORDS_CACHES)
 
 
 CONSONANTS = set(u'бвгджзйклмнпрстфхцчшщъьБВГДЖЗЙКЛМНПРСТФХЦЧШЩЪЬ')

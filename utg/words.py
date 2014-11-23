@@ -37,53 +37,8 @@ class Properties(object):
                 self._data.update(property._data)
 
 
-    def get_key(self, key, schema=None):
-
-        if schema is None:
-            schema = key
-
-        value = []
-        removed = set()
-
-        # apply restrictions
-        for property_group in key:
-            property = self.get(property_group)
-
-            for p in data.INVERTED_RESTRICTIONS.get(property_group, ()):
-
-                if p._relation not in schema:
-                    continue
-
-                if self.get(p._relation) == p and p not in removed: # TODO: test "removed" chech
-                    removed.add(property)
-                    property = None
-                    break
-
-            value.append(property)
-
-        logic._populate_key_with_presets(value, key)
-
-        return tuple(value)
-
-
-    # def get_key(self, key, keys):
-
-    #     samples = set(self.get(property_group) for property_group in key)
-
-    #     samples.add(None)
-
-    #     print '-------------'
-    #     print samples
-    #     print
-
-    #     for candidate_key in keys:
-    #         print candidate_key
-    #         if all(candidate_property in samples for candidate_property in candidate_key):
-    #             return candidate_key
-
-    #     # TODO: raise exception here
-    #     raise Exception('!')
-
+    def get_raw_key(self, schema):
+        return tuple(self.get(property_group) for property_group in schema)
 
     def get(self, property_group):
         if property_group in self._data:
@@ -147,8 +102,8 @@ class Word(object):
 
     def _form(self, properties):
         # here we expected correct full properties
-        return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema)]]
-        # return self.forms[data.WORDS_CACHES[self.type][properties.get_key(key=self.type.schema, keys=data.INVERTED_WORDS_CACHES[self.type])]]
+        index = data.RAW_WORDS_CACHES[self.type][properties.get_raw_key(self.type.schema)]
+        return self.forms[index]
 
     def normal_form(self):
         return self.form(properties=self.properties)

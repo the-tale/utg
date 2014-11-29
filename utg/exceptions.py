@@ -39,9 +39,14 @@ class MoreThenOneWordFoundError(WordsError):
     MSG = u'more then one word found for text="%(text)s" and type=%(type)s'
 
 
-class UnknownLexiconKeyError(WordsError):
+class LexiconError(UtgError):
+    pass
+
+class UnknownLexiconKeyError(LexiconError):
     MSG = u'unknown lexicon key: %(key)s'
 
+class NoTemplatesWithSpecifiedRestrictions(LexiconError):
+    MSG = u'no templates with specified key: %(key)s and restrictions: %(restrictions)r'
 
 class TransformatorsError(UtgError):
     pass

@@ -23,14 +23,14 @@ class Lexicon(object):
         return key in self._data
 
 
-    def _get_templates(self, key, restrictions):
+    def get_templates(self, key, restrictions):
         cache_key = (key, restrictions)
 
         if cache_key in self._restrictions_cache:
             return self._restrictions_cache[cache_key]
 
         templates = [template
-                     for template, template_restrictions in self._data.get(key)
+                     for template, template_restrictions in self._data.get(key, ())
                      if template_restrictions.issubset(restrictions)]
 
         self._restrictions_cache[cache_key] = templates
@@ -42,7 +42,7 @@ class Lexicon(object):
         if key not in self._data:
             raise exceptions.UnknownLexiconKeyError(key=key)
 
-        candidates = self._get_templates(key, restrictions)
+        candidates = self.get_templates(key, restrictions)
 
         if not candidates:
             raise exceptions.NoTemplatesWithSpecifiedRestrictions(key=key, restrictions=restrictions)

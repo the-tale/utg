@@ -116,7 +116,7 @@ class WORD_TYPE(WORD_PROPERTY):
                 ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, NUMBER, CASE, GENDER, ANIMALITY, GRADE), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
                 ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER), {ASPECT: True, VOICE: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, TIME: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, VOICE, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True}),
                 ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', (), {},),
                 # ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', (CASE,), {},),

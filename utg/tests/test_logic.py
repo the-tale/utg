@@ -95,7 +95,7 @@ class LogicTests(TestCase):
                          expected)
 
     def test_get_caches__for_every_word(self):
-        caches, inverted_caches = logic.get_caches(restrictions={})
+        caches, inverted_caches = logic.get_caches(restrictions={word_type: {} for word_type in r.WORD_TYPE.records})
         self.assertEqual(set(caches.keys()),  set(r.WORD_TYPE.records))
         self.assertEqual(set(inverted_caches.keys()), set(r.WORD_TYPE.records))
 

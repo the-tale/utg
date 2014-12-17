@@ -56,9 +56,17 @@ class GeneralTests(TestCase):
 
 
     def test_restrictions_orders(self):
-        for key, restrictions in data.RESTRICTIONS.iteritems():
-            for restriction in restrictions:
-                self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
+        for word_type, restrictions in data.RESTRICTIONS.iteritems():
+            for key, word_type_restrictions in restrictions.iteritems():
+                for restriction in word_type_restrictions:
+                    self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
+
+    def test_only_schema_properties_in_restrictions(self):
+        for word_type, restrictions in data.RESTRICTIONS.iteritems():
+            for key, word_type_restrictions in restrictions.iteritems():
+                self.assertIn(key._relation, set(word_type.schema)|set(word_type.properties))
+                for restriction in word_type_restrictions:
+                    self.assertIn(restriction, set(word_type.schema)|set(word_type.properties))
 
     def test_presets(self):
         for preset_owner, preset_slave in data.PRESETS.iteritems():

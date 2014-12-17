@@ -173,38 +173,14 @@ def _adjective_integer(properties, slave_word=None, master_form=None):
         else:
             return properties.clone(r.NUMBER.PLURAL)
 
-    # Составные числительные, оканчивающиеся на два, три, четыре, управляют в И.п. и В.п. формой Р.п. единственного числа существительных
-    # (ср.: надо купить двадцать два компьютера, я вижу двадцать два студента. Но: я вижу двух студентов).
-    # В остальных падежах эти числительные согласуются с существительными во множественном числе.
     if integer_form.is_COMPOSITE_DUAL:
-        if case.is_NOMINATIVE:
-            return properties.clone(r.NUMBER.SINGULAR, r.CASE.GENITIVE)
-        if case.is_ACCUSATIVE:
-            return properties.clone(r.NUMBER.SINGULAR, r.CASE.GENITIVE)
         return properties.clone(r.NUMBER.PLURAL)
 
-    # Названные составные числительные не сочетаются с существительными, употребляемыми только во множественном числе.
-    # В таких случаях используется конструкция со словом штука или пара (в сочетании с парными предметами) : двадцать две штуки саней или три пары лыж.
-    # TODO
-
-    # Числительные, начиная от пяти и далее  в И.-В. п. управляют формой Р.п. множественного числа существительных:
-    # (пять учеников, сто журналов, девять студенток, шесть окон), а в остальных падежах – согласуются с существительными во множественном числе
-    # (пятью учениками, ста журналами, на шести окнах).
     if integer_form.is_PLURAL:
-        if case.is_NOMINATIVE:
-            return properties.clone(r.NUMBER.PLURAL, r.CASE.GENITIVE)
-        if case.is_ACCUSATIVE:
-            return properties.clone(r.NUMBER.PLURAL, r.CASE.GENITIVE)
         return properties.clone(r.NUMBER.PLURAL)
 
-    # Слова миллион, миллиард во всех падежах управляют существительными в родительном падеже множественного числа
-    # (миллион жителей, миллиона жителей, миллионам жителей).
     if integer_form.is_MIL_BIL:
-        return properties.clone(r.NUMBER.PLURAL, r.CASE.GENITIVE)
-
-    # Определения, выраженные словами последний, первый, второй, каждый, другой употребляются в форме И.-В.п. мн. числа и обычно стоят перед числительным
-    # (последние два экзамена, первые два шага, каждые два часа и т.п.).
-    # TODO
+        return properties.clone(r.NUMBER.PLURAL)
 
     raise exceptions.UnknownIntegerFormError(form=integer_form)
 

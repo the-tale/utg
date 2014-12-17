@@ -95,11 +95,11 @@ def get_caches(restrictions):
     caches = {}
     inverted_caches = {}
 
-    for word in r.WORD_TYPE.records:
-        cache, inverted_cache = _get_cache(word.schema, restrictions)
+    for word_type in r.WORD_TYPE.records:
+        cache, inverted_cache = _get_cache(word_type.schema, restrictions[word_type])
 
-        caches[word] = cache
-        inverted_caches[word] = inverted_cache
+        caches[word_type] = cache
+        inverted_caches[word_type] = inverted_cache
 
 
     return caches, inverted_caches
@@ -170,3 +170,11 @@ def get_raw_caches(inverted_caches):
         caches[word_type] = cache
 
     return caches
+
+
+def pretty_format_current_keys_cache():
+    import pprint
+
+    from utg import data
+
+    return pprint.pformat(data.WORDS_CACHES)

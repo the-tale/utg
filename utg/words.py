@@ -187,6 +187,9 @@ class Word(object):
 
             nearest_key = logic.get_nearest_key(inverted_cache[i], available_keys)
 
+            if nearest_key is None:
+                continue
+
             self.forms[i] = self.forms[data.WORDS_CACHES[self.type][nearest_key]]
 
 

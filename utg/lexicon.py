@@ -6,11 +6,10 @@ from utg import exceptions
 
 
 class Lexicon(object):
-    __slots__ = ('_data', '_restrictions_cache')
+    __slots__ = ('_data',)
 
     def __init__(self):
         self._data = {}
-        self._restrictions_cache = {}
 
 
     def add_template(self, key, template, restrictions=frozenset()):
@@ -24,16 +23,9 @@ class Lexicon(object):
 
 
     def get_templates(self, key, restrictions):
-        cache_key = (key, restrictions)
-
-        if cache_key in self._restrictions_cache:
-            return self._restrictions_cache[cache_key]
-
-        templates = [template
-                     for template, template_restrictions in self._data.get(key, ())
-                     if template_restrictions.issubset(restrictions)]
-
-        self._restrictions_cache[cache_key] = templates
+        templates = tuple(template
+                          for template, template_restrictions in self._data.get(key, ())
+                          if template_restrictions.issubset(restrictions))
 
         return templates
 

@@ -16,7 +16,6 @@ class LexiconTests(TestCase):
 
     def test_init(self):
         self.assertEqual(self.lexicon._data, {})
-        self.assertEqual(self.lexicon._restrictions_cache, {})
 
 
     def test_add_template(self):
@@ -62,7 +61,6 @@ class LexiconTests(TestCase):
         for i in xrange(100):
             templates.add(self.lexicon.get_random_template(key, frozenset(restrictions)))
 
-        self.assertIn((key, frozenset(restrictions)), self.lexicon._restrictions_cache)
         self.assertEqual(templates, set(expected))
 
 

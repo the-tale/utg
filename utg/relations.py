@@ -40,7 +40,7 @@ class VOICE(WORD_PROPERTY):
                 ('REVERSE', 1, u'возвратный залог', u'взв')  )
 
 class TIME(WORD_PROPERTY):
-    records = ( ('PAST', 1, u'прошлое время', u'прш'),
+    records = ( ('PAST', 1, u'прошедшее время', u'прш'),
                 ('PRESENT', 2, u'настоящее время', u'нст'),
                 ('FUTURE', 3, u'будущее время', u'буд') )
 

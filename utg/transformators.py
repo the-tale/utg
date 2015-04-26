@@ -187,6 +187,7 @@ def _adjective_integer(properties, slave_word=None, master_form=None):
 
 _TRANSFORMATORS = {(r.WORD_TYPE.NOUN, r.WORD_TYPE.INTEGER): _noun_integer,
                    (r.WORD_TYPE.ADJECTIVE, r.WORD_TYPE.INTEGER): _adjective_integer,
+                   (r.WORD_TYPE.VERB, r.WORD_TYPE.INTEGER): _adjective_integer,
                    (r.WORD_TYPE.PRONOUN, r.WORD_TYPE.INTEGER): _noun_integer,
                    (r.WORD_TYPE.PARTICIPLE, r.WORD_TYPE.INTEGER): _adjective_integer}
 

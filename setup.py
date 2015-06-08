@@ -2,16 +2,29 @@
 import setuptools
 
 setuptools.setup(
-    name = 'UTG',
-    version = '0.1.0',
-    author = 'Aleksey Yeletsky',
-    author_email = 'a.eletsky@gmail.com',
-    packages = setuptools.find_packages(),
-    url = 'https://github.com/Tiendil/utg',
-    license = 'LICENSE',
-    description = "universal text generation",
-    long_description = open('README.md').read(),
-    include_package_data = True, # setuptools-git MUST be installed
-    test_suite = 'tests'# ,
-    # package_data = { '': ['*.json'] }
-)
+    name='UTG',
+    version='0.1.0',
+    description=u'Генератор связанного русского текста',
+    long_description = open('README.rst').read(),
+    url='https://github.com/Tiendil/utg',
+    author='Aleksey Yeletsky <Tiendil>',
+    author_email='a.eletsky@gmail.com',
+    license='BSD',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+
+        'Intended Audience :: Developers',
+
+        'Topic :: Software Development :: Libraries :: Python Modules',
+
+        'License :: OSI Approved :: BSD License',
+
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+
+        'Natural Language :: Russian'],
+    keywords=['text generation', 'генерация текста'],
+    packages=setuptools.find_packages(),
+    include_package_data=True,
+    test_suite = 'tests',
+    )

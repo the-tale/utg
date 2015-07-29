@@ -4,6 +4,7 @@
 from unittest import TestCase
 
 from utg import relations as r
+from utg import restrictions as restr
 from utg import logic
 from utg import data
 from utg import dictionary
@@ -20,6 +21,8 @@ EXPECTED_ORDER = [ r.VERB_FORM,
                    r.ADJECTIVE_CATEGORY,
                    r.PRONOUN_CATEGORY,
 
+                   r.GRADE,
+
                    r.TIME,
                    r.VOICE,
                    r.ASPECT,
@@ -29,7 +32,6 @@ EXPECTED_ORDER = [ r.VERB_FORM,
                    r.GENDER,
 
                    r.ANIMALITY,
-                   r.GRADE,
 
                    r.INTEGER_FORM,
 
@@ -56,24 +58,24 @@ class GeneralTests(TestCase):
         for word_type in r.WORD_TYPE.records:
             self.assertEqual(word_type.schema,
                              tuple(sorted(word_type.schema,
-                                        cmp=lambda a, b: cmp(EXPECTED_ORDER.index(a), EXPECTED_ORDER.index(b)))))
+                                          cmp=lambda a, b: cmp(EXPECTED_ORDER.index(a), EXPECTED_ORDER.index(b)))))
 
 
     def test_restrictions_orders(self):
-        for word_type, restrictions in data.RESTRICTIONS.iteritems():
+        for word_type, restrictions in restr.RESTRICTIONS.iteritems():
             for key, word_type_restrictions in restrictions.iteritems():
                 for restriction in word_type_restrictions:
                     self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
 
     def test_only_schema_properties_in_restrictions(self):
-        for word_type, restrictions in data.RESTRICTIONS.iteritems():
+        for word_type, restrictions in restr.RESTRICTIONS.iteritems():
             for key, word_type_restrictions in restrictions.iteritems():
                 self.assertIn(key._relation, set(word_type.schema)|set(word_type.properties))
                 for restriction in word_type_restrictions:
                     self.assertIn(restriction, set(word_type.schema)|set(word_type.properties))
 
     def test_presets(self):
-        for preset_owner, preset_slave in data.PRESETS.iteritems():
+        for preset_owner, preset_slave in restr.PRESETS.iteritems():
             for word_type, cache in data.WORDS_CACHES.iteritems():
                 if preset_owner._relation not in word_type.schema or preset_slave._relation not in word_type.schema:
                     continue

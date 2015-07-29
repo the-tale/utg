@@ -23,7 +23,8 @@ class Properties(object):
     def deserialize(cls, data):
         return cls(*[r.PROPERTY_TYPE(int(property_type)).relation(property_value)
                      for property_type, property_value in data.iteritems()
-                     if int(property_type) in r.PROPERTY_TYPE.index_value]) # ignore not actual properties
+                     if int(property_type) in r.PROPERTY_TYPE.index_value and
+                     property_value in r.PROPERTY_TYPE(int(property_type)).relation.index_value]) # ignore not actual properties
 
     def _update(self, *argv):
         for property in argv:

@@ -70,13 +70,6 @@ class LogicTests(TestCase):
                      [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.INSTRUMENTAL],
                      [r.GENDER.NEUTER, r.VERB_FORM.INDICATIVE, r.CASE.PREPOSITIONAL],
 
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.NOMINATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.GENITIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.DATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.ACCUSATIVE],
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.INSTRUMENTAL],
-                     [r.GENDER.NEUTER, r.VERB_FORM.CONDITIONAL, r.CASE.PREPOSITIONAL],
-
                      [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.NOMINATIVE],
                      [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.GENITIVE],
                      [r.GENDER.NEUTER, r.VERB_FORM.IMPERATIVE, r.CASE.DATIVE],
@@ -95,12 +88,12 @@ class LogicTests(TestCase):
                          expected)
 
     def test_get_caches__for_every_word(self):
-        caches, inverted_caches = logic.get_caches(restrictions={word_type: {} for word_type in r.WORD_TYPE.records})
+        caches, inverted_caches = logic.get_caches(restrictions={word_type: {} for word_type in r.WORD_TYPE.records}, restricted_key_parts={})
         self.assertEqual(set(caches.keys()),  set(r.WORD_TYPE.records))
         self.assertEqual(set(inverted_caches.keys()), set(r.WORD_TYPE.records))
 
     def test_get_caches(self):
-        cache, inverted_cache = logic._get_cache(schema=(r.NUMBER, r.CASE), restrictions={})
+        cache, inverted_cache = logic._get_cache(schema=(r.NUMBER, r.CASE), restrictions={}, restricted_key_parts=())
 
         self.assertEqual(len(cache), 12)
 
@@ -131,8 +124,38 @@ class LogicTests(TestCase):
                            (r.NUMBER.PLURAL, r.CASE.INSTRUMENTAL),
                            (r.NUMBER.PLURAL, r.CASE.PREPOSITIONAL) ] )
 
+    def test_get_caches__restricted_parts(self):
+        cache, inverted_cache = logic._get_cache(schema=(r.NUMBER, r.CASE),
+                                                 restrictions={},
+                                                 restricted_key_parts=(frozenset((r.NUMBER.SINGULAR, r.CASE.DATIVE)), frozenset((r.NUMBER.PLURAL, r.CASE.ACCUSATIVE))))
+
+        self.assertEqual(len(cache), 10)
+
+        self.assertEqual(cache,
+                         { (r.NUMBER.SINGULAR, r.CASE.NOMINATIVE): 0,
+                           (r.NUMBER.SINGULAR, r.CASE.GENITIVE): 1,
+                           (r.NUMBER.SINGULAR, r.CASE.ACCUSATIVE): 2,
+                           (r.NUMBER.SINGULAR, r.CASE.INSTRUMENTAL): 3,
+                           (r.NUMBER.SINGULAR, r.CASE.PREPOSITIONAL): 4,
+                           (r.NUMBER.PLURAL, r.CASE.NOMINATIVE): 5,
+                           (r.NUMBER.PLURAL, r.CASE.GENITIVE): 6,
+                           (r.NUMBER.PLURAL, r.CASE.DATIVE): 7,
+                           (r.NUMBER.PLURAL, r.CASE.INSTRUMENTAL): 8,
+                           (r.NUMBER.PLURAL, r.CASE.PREPOSITIONAL): 9})
+        self.assertEqual(inverted_cache,
+                         [ (r.NUMBER.SINGULAR, r.CASE.NOMINATIVE),
+                           (r.NUMBER.SINGULAR, r.CASE.GENITIVE),
+                           (r.NUMBER.SINGULAR, r.CASE.ACCUSATIVE),
+                           (r.NUMBER.SINGULAR, r.CASE.INSTRUMENTAL),
+                           (r.NUMBER.SINGULAR, r.CASE.PREPOSITIONAL),
+                           (r.NUMBER.PLURAL, r.CASE.NOMINATIVE),
+                           (r.NUMBER.PLURAL, r.CASE.GENITIVE),
+                           (r.NUMBER.PLURAL, r.CASE.DATIVE),
+                           (r.NUMBER.PLURAL, r.CASE.INSTRUMENTAL),
+                           (r.NUMBER.PLURAL, r.CASE.PREPOSITIONAL) ] )
+
     def test_get_caches__with_restrictions(self):
-        cache, inverted_cache = logic._get_cache(schema=(r.NUMBER, r.CASE), restrictions={r.NUMBER.PLURAL: [r.CASE]})
+        cache, inverted_cache = logic._get_cache(schema=(r.NUMBER, r.CASE), restrictions={r.NUMBER.PLURAL: [r.CASE]}, restricted_key_parts=())
 
         self.assertEqual(len(cache), 7)
         self.assertEqual(cache,
@@ -167,7 +190,7 @@ class LogicTests(TestCase):
             self.assertEqual(logic.get_nearest_key(key, available_keys), expected_key)
 
 
-    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    @mock.patch('utg.restrictions.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
     def test_populate_key_with_presets(self):
 
         schema = (r.NOUN_FORM, r.CASE, r.NUMBER)
@@ -191,7 +214,7 @@ class LogicTests(TestCase):
 
 
 
-    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    @mock.patch('utg.restrictions.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
     def test_populate_key_with_presets__without_owner(self):
 
         schema = (r.VERB_FORM, r.CASE, r.NUMBER)
@@ -214,7 +237,7 @@ class LogicTests(TestCase):
             self.assertEqual(key_to_process, result)
 
 
-    @mock.patch('utg.data.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
+    @mock.patch('utg.restrictions.PRESETS', {r.NOUN_FORM.COUNTABLE: r.NUMBER.PLURAL})
     def test_populate_key_with_presets__without_slave(self):
 
         schema = (r.NOUN_FORM, r.CASE, r.GENDER)

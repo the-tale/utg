@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from utg import relations as r
+from . import relations as r
+from .restrictions import PRESETS
 
 
 def get_property_relations():
@@ -30,7 +31,6 @@ def get_verbose_to_relations():
 
 
 def _keys_generator(left, right, restrictions):
-    from utg.data import PRESETS
 
     if not right:
         yield []
@@ -58,12 +58,20 @@ def _keys_generator(left, right, restrictions):
 
     return
 
+def _restricted_keys_generator(left, right, restrictions, restricted_key_parts):
+    for key in _keys_generator(left, right, restrictions):
+        for restricted_part in restricted_key_parts:
+            if restricted_part.issubset(set(key)):
+                break
+        else:
+            yield key
 
-def _get_cache(schema, restrictions):
+
+def _get_cache(schema, restrictions, restricted_key_parts):
     cache = {}
     inverted_cache = []
 
-    for i, key in enumerate(_keys_generator([], schema, restrictions=restrictions)):
+    for i, key in enumerate(_restricted_keys_generator([], schema, restrictions=restrictions, restricted_key_parts=restricted_key_parts)):
         cache[tuple(key)] = i
         inverted_cache.append(tuple(key))
 
@@ -71,8 +79,6 @@ def _get_cache(schema, restrictions):
 
 
 def _populate_key_with_presets(key, schema):
-    from utg.data import PRESETS
-
     replaces = {}
 
     for property in key:
@@ -90,13 +96,13 @@ def _populate_key_with_presets(key, schema):
             key[index] = replaces[property_group]
 
 
-def get_caches(restrictions):
+def get_caches(restrictions, restricted_key_parts):
 
     caches = {}
     inverted_caches = {}
 
     for word_type in r.WORD_TYPE.records:
-        cache, inverted_cache = _get_cache(word_type.schema, restrictions[word_type])
+        cache, inverted_cache = _get_cache(word_type.schema, restrictions[word_type], restricted_key_parts.get(word_type, ()))
 
         caches[word_type] = cache
         inverted_caches[word_type] = inverted_cache
@@ -123,8 +129,6 @@ def get_nearest_key(key, available_keys):
 
 
 def _raw_keys_generator(left, key, schema):
-    from utg.data import PRESETS
-
     if not key:
         yield []
         return

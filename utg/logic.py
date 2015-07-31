@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from . import relations as r
-from .restrictions import PRESETS
 
 
 def get_property_relations():
@@ -38,13 +37,6 @@ def _keys_generator(left, right, restrictions):
 
     central, right = right[0], right[1:]
 
-    # if property is in preset
-    for preset_owner, preset_slave in PRESETS.iteritems():
-        if preset_slave._relation == central and preset_owner in left:
-            for tail in _keys_generator(left + [preset_slave], right, restrictions):
-                yield [preset_slave] + tail
-            return
-
     # if property in restrictions
     for used_property in left:
         if used_property in restrictions and central in restrictions[used_property]:
@@ -76,24 +68,6 @@ def _get_cache(schema, restrictions, restricted_key_parts):
         inverted_cache.append(tuple(key))
 
     return cache, inverted_cache
-
-
-def _populate_key_with_presets(key, schema):
-    replaces = {}
-
-    for property in key:
-        if property not in PRESETS:
-            continue
-
-        replace = PRESETS[property]
-        replaces[replace._relation] = replace
-
-    if not replaces:
-        return
-
-    for index, property_group in enumerate(schema):
-        if property_group in replaces:
-            key[index] = replaces[property_group]
 
 
 def get_caches(restrictions, restricted_key_parts):
@@ -128,7 +102,7 @@ def get_nearest_key(key, available_keys):
     return best_key
 
 
-def _raw_keys_generator(left, key, schema):
+def _raw_keys_generator(key, schema):
     if not key:
         yield []
         return
@@ -136,31 +110,45 @@ def _raw_keys_generator(left, key, schema):
     schema_head, schema_tail = schema[0], schema[1:]
     key_head, key_tail = key[0], key[1:]
 
-    # if head is in preset
-    for preset_owner, preset_slave in PRESETS.iteritems():
-        if preset_slave == key_head and preset_owner in left:
-            key_head = None
-            break
-
-
     if key_head is not None:
-        for tail in _raw_keys_generator(left + [key_head], key_tail, schema_tail):
+        for tail in _raw_keys_generator(key_tail, schema_tail):
             yield [key_head] + tail
         return
 
     for head in schema_head.records:
-        for tail in _raw_keys_generator(left + [head], key_tail, schema_tail):
+        for tail in _raw_keys_generator(key_tail, schema_tail):
             yield [head] + tail
 
     return
 
 
+def _full_keys_generator(schema):
+    if not schema:
+        yield []
+        return
+
+    schema_head, schema_tail = schema[0], schema[1:]
+
+    for record in schema_head.records:
+        for tail in _full_keys_generator(schema_tail):
+            yield [record] + tail
+
+
 def _get_raw_cache(keys, schema):
     cache = {}
 
+    # raw keys from existed keys
     for index, key in enumerate(keys):
-        for raw_key in _raw_keys_generator([], key, schema):
+        for raw_key in _raw_keys_generator(key, schema):
             cache[tuple(raw_key)] = index
+
+    # add missed raw keys
+    for key in _full_keys_generator(schema):
+        key = tuple(key)
+        if key in cache:
+            continue
+        nearest_key = get_nearest_key(key, cache.iterkeys())
+        cache[key] = cache[nearest_key]
 
     return cache
 

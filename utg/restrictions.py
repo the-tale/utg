@@ -4,8 +4,7 @@ from utg import relations as r
 
 # large restriction groups
 RESTRICTIONS = {
-    r.WORD_TYPE.NOUN: { r.NUMBER.PLURAL: (r.GENDER,),
-                        r.NOUN_FORM.COUNTABLE: (r.NUMBER,) },
+    r.WORD_TYPE.NOUN: { r.NUMBER.PLURAL: (r.GENDER,) },
     r.WORD_TYPE.ADJECTIVE:{ r.NUMBER.PLURAL: (r.GENDER,),
                             r.ADJECTIVE_CATEGORY.RELATIVE: (r.GRADE,),
                             r.ADJECTIVE_CATEGORY.POSSESSIVE: (r.GRADE,),
@@ -35,6 +34,7 @@ RESTRICTIONS = {
 
 # additional restrictions
 RESTRICTED_KEY_PARTS = {
+    r.WORD_TYPE.NOUN: ( frozenset((r.NOUN_FORM.COUNTABLE, r.NUMBER.SINGULAR)), ),
     r.WORD_TYPE.VERB: ( frozenset((r.VERB_FORM.IMPERATIVE, r.PERSON.THIRD)),
                         frozenset((r.VERB_FORM.IMPERATIVE, r.PERSON.FIRST, r.NUMBER.SINGULAR)) )
     }

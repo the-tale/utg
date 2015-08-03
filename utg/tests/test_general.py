@@ -26,12 +26,14 @@ EXPECTED_ORDER = [ r.VERB_FORM,
                    r.TIME,
                    r.VOICE,
                    r.ASPECT,
+
+                   # ANIMALITY must be before NUMBER, CASE & GENDER to correct work of nearest_key for adjective & participle
+                   r.ANIMALITY,
+
                    r.NUMBER,
                    r.CASE,
                    r.PERSON,
                    r.GENDER,
-
-                   r.ANIMALITY,
 
                    r.INTEGER_FORM,
 

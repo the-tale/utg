@@ -113,15 +113,12 @@ class WORD_TYPE(WORD_PROPERTY):
     properties = Column(unique=False, no_index=True)
 
     records = ( ('NOUN', 0, u'существительное', u'сущ', (NOUN_FORM, NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
-                ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, GRADE, NUMBER, CASE, GENDER, ANIMALITY), {ADJECTIVE_CATEGORY: True}),
+                ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, GRADE, ANIMALITY, NUMBER, CASE, GENDER), {ADJECTIVE_CATEGORY: True}),
                 ('PRONOUN', 2, u'местоимение', u'мест', (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
                 ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER), {ASPECT: True, VOICE: True}),
-                ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, NUMBER, CASE, GENDER, ANIMALITY), {ASPECT: True, VOICE: True}),
+                ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, ANIMALITY, NUMBER, CASE, GENDER), {ASPECT: True, VOICE: True}),
                 ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),
                 ('TEXT', 6, u'текст', u'текст', (), {},),
-                # ('NOUN_COUNTABLE_FORM', 7, u'счётная форма существительного', u'сущс', (CASE,), {},),
-                # ('SHORT_ADJECTIVE', 8, u'краткое прилагательное', u'кприл', (NUMBER, GENDER), {}),
-                # ('SHORT_PARTICIPLE', 9, u'краткое причастие', u'кприч', (NUMBER, GENDER), {ASPECT: True, TIME: True}),
                 ('PREPOSITION', 10, u'предлог', u'предл', (PREPOSITION_FORM,), {}) )
 
 

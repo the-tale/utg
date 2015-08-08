@@ -90,9 +90,9 @@ def _noun_integer(properties, slave_word=None, master_form=None):
 
     if properties.get(r.DEPENDENCY_MODE).is_SEMANTIC:
         if integer_form.is_SINGULAR:
-            return properties.clone(r.NUMBER.SINGULAR)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.SINGULAR)
         else:
-            return properties.clone(r.NUMBER.PLURAL)
+            return properties.clone(r.NOUN_FORM.NORMAL, r.NUMBER.PLURAL)
 
     case = properties.get(r.CASE)
     animality = properties.get(r.ANIMALITY)

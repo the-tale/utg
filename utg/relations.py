@@ -101,6 +101,10 @@ class WORD_CASE(WORD_PROPERTY):
     records = ( ('LOWER', 0, u'строчная', u'строч'),
                 ('UPPER', 1, u'заглавная', u'загл') )
 
+class DEPENDENCY_MODE(WORD_PROPERTY):
+    records = ( ('FULL', 0, u'полная зависимость', u'пзв'),
+                ('SEMANTIC', 1, u'семантическая зависимость', u'сзв') )
+
 
 class PREPOSITION_FORM(WORD_PROPERTY):
     records = ( ('NORMAL', 0, u'основная форма', u'осн'),
@@ -144,8 +148,9 @@ class PROPERTY_TYPE(EnumWithText):
                 ('PREPOSITION_FORM', 16, u'форма предлога', PREPOSITION_FORM),
                 ('ADJECTIVE_FORM', 17, u'форма прилагательного', ADJECTIVE_FORM),
                 ('PARTICIPLE_FORM', 18, u'форма причастия', PARTICIPLE_FORM),
-                ('NOUN_FORM', 19, u'форма существительного', NOUN_FORM)
-                )
+                ('NOUN_FORM', 19, u'форма существительного', NOUN_FORM),
+                ('DEPENDENCY_MODE', 20, u'вид зависимости между словами', DEPENDENCY_MODE)
+              )
 
 # имя числительное;
 # наречие;

@@ -38,6 +38,7 @@ EXPECTED_ORDER = [ r.VERB_FORM,
                    r.INTEGER_FORM,
 
                    r.WORD_CASE,
+                   r.DEPENDENCY_MODE,
 
                    r.PREPOSITION_FORM,
 

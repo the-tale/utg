@@ -24,6 +24,7 @@ class LogicTests(TestCase):
                           r.VOICE.DIRECT,
                           r.PRONOUN_CATEGORY.PERSONAL,
                           r.WORD_CASE.LOWER,
+                          r.DEPENDENCY_MODE.FULL,
                           r.ANIMALITY.ANIMATE,
                           r.PERSON.FIRST,
                           r.GRADE.POSITIVE,

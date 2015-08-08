@@ -170,8 +170,7 @@ class TransformatorsTests(TestCase):
                                           u'юристы', u'юристов', u'юристам', u'юристов', u'юристами', u'юристах'],
                                    properties=words.Properties(r.GENDER.NEUTER, r.ANIMALITY.INANIMATE))
 
-        master_word_3 = words.Word(type=r.WORD_TYPE.PRONOUN,
-                                   forms=[u'я', u'я', u'я', u'ты', u'ты', u'ты', u'он', u'оно', u'она', u'меня', u'меня', u'меня', u'тебя', u'тебя', u'тебя', u'его', u'его', u'её', u'мне', u'мне', u'мне', u'тебе', u'тебе', u'тебе', u'ему', u'ему', u'ей', u'меня', u'меня', u'меня', u'тебя', u'тебя', u'тебя', u'его', u'его', u'её', u'мной', u'мной', u'мной', u'тобой', u'тобой', u'тобой', u'им', u'им', u'ей', u'мне', u'мне', u'мне', u'тебе', u'тебе', u'тебе', u'нём', u'нём', u'ней', u'мы', u'вы', u'они', u'нас', u'вас', u'их', u'нам', u'вам', u'им', u'нас', u'вас', u'их', u'нами', u'вами', u'ими', u'нас', u'вас', u'них'],
+        master_word_3 = words.Word(type=r.WORD_TYPE.PRONOUN, forms=[ u'я', u'я', u'я', u'меня', u'меня', u'меня', u'мне', u'мне', u'мне', u'меня', u'меня', u'меня', u'мной', u'мной', u'мной', u'мне', u'мне', u'мне', u'мы', u'нас', u'нам', u'нас', u'нами', u'нас', u'я', u'я', u'я', u'меня', u'меня', u'меня', u'мне', u'мне', u'мне', u'меня', u'меня', u'меня', u'мной', u'мной', u'мной', u'мне', u'мне', u'мне', u'мы', u'нас', u'нам', u'нас', u'нами', u'нас'],
                                    properties=words.Properties(r.PRONOUN_CATEGORY.PERSONAL))
 
         slave_properties = words.Properties(random.choice(r.PREPOSITION_FORM.records))

@@ -114,7 +114,7 @@ class WORD_TYPE(WORD_PROPERTY):
 
     records = ( ('NOUN', 0, u'существительное', u'сущ', (NOUN_FORM, NUMBER, CASE), {ANIMALITY: True, GENDER: True, NUMBER: False }),
                 ('ADJECTIVE', 1, u'прилагательное', u'прил', (ADJECTIVE_FORM, GRADE, ANIMALITY, NUMBER, CASE, GENDER), {ADJECTIVE_CATEGORY: True}),
-                ('PRONOUN', 2, u'местоимение', u'мест', (NUMBER, CASE, PERSON, GENDER), {PRONOUN_CATEGORY: True}),
+                ('PRONOUN', 2, u'местоимение', u'мест', (ANIMALITY, NUMBER, CASE, GENDER), {PRONOUN_CATEGORY: True, PERSON: False}),
                 ('VERB', 3, u'глагол', u'гл', (VERB_FORM, TIME, NUMBER, PERSON, GENDER), {ASPECT: True, VOICE: True}),
                 ('PARTICIPLE', 4, u'причастие', u'прич', (PARTICIPLE_FORM, TIME, ANIMALITY, NUMBER, CASE, GENDER), {ASPECT: True, VOICE: True}),
                 ('INTEGER', 5, u'целое число', u'целое', (), {NUMBER: True, INTEGER_FORM: True},),

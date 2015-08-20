@@ -64,6 +64,9 @@ class Properties(object):
         return (isinstance(other, Properties) and
                 self._data == other._data)
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
     def manhattan_distance(self):
         return len([1
@@ -117,6 +120,9 @@ class Word(object):
                 self.type == other.type and
                 self.properties == other.properties and
                 self.forms == other.forms)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @classmethod
     def get_forms_number(cls, type):
@@ -226,6 +232,9 @@ class WordForm(object):
     def __eq__(self, other):
         return (self.word == other.word and
                 self.properties == other.properties)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 _INVERTED_WORDS_CACHES__PROPERTIES = {}

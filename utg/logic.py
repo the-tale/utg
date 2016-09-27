@@ -5,7 +5,7 @@ from . import relations as r
 
 def get_property_relations():
     return [relation
-            for relation in r.__dict__.itervalues()
+            for relation in r.__dict__.values()
             if relation != r.WORD_PROPERTY and isinstance(relation, type) and issubclass(relation, r.WORD_PROPERTY)]
 
 
@@ -147,7 +147,7 @@ def _get_raw_cache(keys, schema):
         key = tuple(key)
         if key in cache:
             continue
-        nearest_key = get_nearest_key(key, cache.iterkeys())
+        nearest_key = get_nearest_key(key, cache.keys())
         cache[key] = cache[nearest_key]
 
     return cache

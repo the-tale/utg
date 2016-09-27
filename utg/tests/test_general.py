@@ -59,27 +59,25 @@ class GeneralTests(TestCase):
         self.assertEqual(set(logic.get_property_relations()), set(EXPECTED_ORDER))
 
         for word_type in r.WORD_TYPE.records:
-            self.assertEqual(word_type.schema,
-                             tuple(sorted(word_type.schema,
-                                          cmp=lambda a, b: cmp(EXPECTED_ORDER.index(a), EXPECTED_ORDER.index(b)))))
+            self.assertEqual(word_type.schema, tuple(sorted(word_type.schema, key=EXPECTED_ORDER.index)))
 
 
     def test_restrictions_orders(self):
-        for word_type, restrictions in restr.RESTRICTIONS.iteritems():
-            for key, word_type_restrictions in restrictions.iteritems():
+        for word_type, restrictions in restr.RESTRICTIONS.items():
+            for key, word_type_restrictions in restrictions.items():
                 for restriction in word_type_restrictions:
                     self.assertTrue(EXPECTED_ORDER.index(key._relation) < EXPECTED_ORDER.index(restriction))
 
     def test_only_schema_properties_in_restrictions(self):
-        for word_type, restrictions in restr.RESTRICTIONS.iteritems():
-            for key, word_type_restrictions in restrictions.iteritems():
+        for word_type, restrictions in restr.RESTRICTIONS.items():
+            for key, word_type_restrictions in restrictions.items():
                 self.assertIn(key._relation, set(word_type.schema)|set(word_type.properties))
                 for restriction in word_type_restrictions:
                     self.assertIn(restriction, set(word_type.schema)|set(word_type.properties))
 
     def test_presets(self):
-        for preset_owner, preset_slave in restr.PRESETS.iteritems():
-            for word_type, cache in data.WORDS_CACHES.iteritems():
+        for preset_owner, preset_slave in restr.PRESETS.items():
+            for word_type, cache in data.WORDS_CACHES.items():
                 if preset_owner._relation not in word_type.schema or preset_slave._relation not in word_type.schema:
                     continue
 
@@ -106,15 +104,15 @@ class GeneralTests(TestCase):
     def test_full_usage(self):
         # описываем существительное для словаря
         coins_word = words.Word(type=r.WORD_TYPE.NOUN,
-                                forms=[ u'монета', u'монеты', u'монете', u'монету', u'монетой', u'монете',    # единственнео число
-                                        u'монеты', u'монет', u'монетам', u'монеты', u'монетами', u'монетах',  # множественное число
-                                        u'монеты', u'монет', u'монетам', u'монеты', u'монетами', u'монетах'], # счётное число (заполнено для пример, может быть заполнено методом autofill_missed_forms)
+                                forms=[ 'монета', 'монеты', 'монете', 'монету', 'монетой', 'монете',    # единственнео число
+                                        'монеты', 'монет', 'монетам', 'монеты', 'монетами', 'монетах',  # множественное число
+                                        'монеты', 'монет', 'монетам', 'монеты', 'монетами', 'монетах'], # счётное число (заполнено для пример, может быть заполнено методом autofill_missed_forms)
                                 properties=words.Properties(r.ANIMALITY.INANIMATE, r.GENDER.FEMININE)) # свойства: неодушевлённое, женский род
 
         # описываем глагол для словаря
         action_word = words.Word(type=r.WORD_TYPE.VERB,
                                  # описываем только нужны нам формы слова (порядок важен и определён в utg.data.WORDS_CACHES[r.WORD_TYPE.VERB])
-                                 forms=[u'подарить', u'подарил', u'подарило', u'подарила', u'подарили'] + [u''] * (len(data.WORDS_CACHES[r.WORD_TYPE.VERB]) - 5),
+                                 forms=['подарить', 'подарил', 'подарило', 'подарила', 'подарили'] + [''] * (len(data.WORDS_CACHES[r.WORD_TYPE.VERB]) - 5),
                                  properties=words.Properties(r.ASPECT.PERFECTIVE, r.VOICE.DIRECT) )
         action_word.autofill_missed_forms() # заполняем пропущенные формы на основе введённых (выбираются наиболее близкие)
 
@@ -125,19 +123,19 @@ class GeneralTests(TestCase):
         template = templates.Template()
 
         # externals — внешние переменные, не обязаны быть в словаре
-        template.parse(u'[Npc] [подарил|npc] [hero|дт] [coins] [монета|coins|вн].', externals=('hero', 'npc', 'coins'))
+        template.parse('[Npc] [подарил|npc] [hero|дт] [coins] [монета|coins|вн].', externals=('hero', 'npc', 'coins'))
 
         # описываем внешние переменные
         hero = words.WordForm(words.Word(type=r.WORD_TYPE.NOUN,
-                                           forms=[u'герой', u'героя', u'герою', u'героя', u'героем', u'герое',
-                                                  u'герои', u'героев', u'героям', u'героев', u'героями', u'героях',
-                                                  u'герои', u'героев', u'героям', u'героев', u'героями', u'героях'],
+                                           forms=['герой', 'героя', 'герою', 'героя', 'героем', 'герое',
+                                                  'герои', 'героев', 'героям', 'героев', 'героями', 'героях',
+                                                  'герои', 'героев', 'героям', 'героев', 'героями', 'героях'],
                                            properties=words.Properties(r.ANIMALITY.ANIMATE, r.GENDER.MASCULINE)))
 
         npc = words.WordForm(words.Word(type=r.WORD_TYPE.NOUN,
-                                           forms=[u'русалка', u'русалки', u'русалке', u'русалку', u'русалкой', u'русалке',
-                                                  u'русалки', u'русалок', u'русалкам', u'русалок', u'русалками', u'русалках',
-                                                  u'русалки', u'русалок', u'русалкам', u'русалок', u'русалками', u'русалках'],
+                                           forms=['русалка', 'русалки', 'русалке', 'русалку', 'русалкой', 'русалке',
+                                                  'русалки', 'русалок', 'русалкам', 'русалок', 'русалками', 'русалках',
+                                                  'русалки', 'русалок', 'русалкам', 'русалок', 'русалками', 'русалках'],
                                            properties=words.Properties(r.ANIMALITY.ANIMATE, r.GENDER.FEMININE)))
 
         # осуществляем подстановку
@@ -146,4 +144,4 @@ class GeneralTests(TestCase):
                                                 'coins': constructors.construct_integer(125)},
                                      dictionary=test_dictionary)
 
-        self.assertEqual(result, u'Русалка подарила герою 125 монет.')
+        self.assertEqual(result, 'Русалка подарила герою 125 монет.')

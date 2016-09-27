@@ -43,14 +43,14 @@ class LexiconTests(TestCase):
 
         templates = set()
 
-        for i in xrange(100):
+        for i in range(100):
             templates.add(self.lexicon.get_random_template(1))
 
         self.assertEqual(templates, set(['template_1', 'template_3']))
 
         templates = set()
 
-        for i in xrange(100):
+        for i in range(100):
             templates.add(self.lexicon.get_random_template(2))
 
         self.assertEqual(templates, set(['template_2']))
@@ -58,7 +58,7 @@ class LexiconTests(TestCase):
     def check_get_random_template_restrictions(self, key, restrictions, expected):
         templates = set()
 
-        for i in xrange(100):
+        for i in range(100):
             templates.add(self.lexicon.get_random_template(key, frozenset(restrictions)))
 
         self.assertEqual(templates, set(expected))

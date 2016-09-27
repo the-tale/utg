@@ -4,7 +4,7 @@ import setuptools
 setuptools.setup(
     name='UTG',
     version='0.2.0',
-    description=u'Генератор связанного русского текста',
+    description='Генератор связанного русского текста',
     long_description = open('README.rst').read(),
     url='https://github.com/Tiendil/utg',
     author='Aleksey Yeletsky <Tiendil>',
@@ -19,8 +19,8 @@ setuptools.setup(
 
         'License :: OSI Approved :: BSD License',
 
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
 
         'Natural Language :: Russian'],
     keywords=['text generation', 'генерация текста'],

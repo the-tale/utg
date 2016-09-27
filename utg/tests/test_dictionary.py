@@ -24,7 +24,7 @@ class DictionaryTests(TestCase):
         word.forms[:3] = ['x1', 'x2', 'x3']
         self.dictionary.add_word(word)
 
-        self.assertEqual({k:v for k,v in self.dictionary._data.iteritems() if k in ['x1', 'x2', 'x3']},
+        self.assertEqual({k:v for k,v in self.dictionary._data.items() if k in ['x1', 'x2', 'x3']},
                          {'x1': words.WordForm(word, properties=word.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)),
                           'x2': words.WordForm(word, properties=word.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
                           'x3': words.WordForm(word, properties=word.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR))})
@@ -114,7 +114,7 @@ class DictionaryTests(TestCase):
 
         self.dictionary.add_word(word)
 
-        self.assertEqual({k:v for k,v in self.dictionary._data.iteritems() if k in ['x1', 'x2', 'x3']},
+        self.assertEqual({k:v for k,v in self.dictionary._data.items() if k in ['x1', 'x2', 'x3']},
                          {'x1': words.WordForm(word, properties=word.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)),
                           'x2': words.WordForm(word, properties=word.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR))})
 
@@ -129,7 +129,7 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_1)
         self.dictionary.add_word(word_2)
 
-        self.assertEqual({k:v for k,v in self.dictionary._data.iteritems() if k in ['x1', 'x2', 'x3', 'y1', 'y2', 'y3']},
+        self.assertEqual({k:v for k,v in self.dictionary._data.items() if k in ['x1', 'x2', 'x3', 'y1', 'y2', 'y3']},
                          {'x1': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)),
                           'x2': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
                           'x3': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR)),
@@ -149,7 +149,7 @@ class DictionaryTests(TestCase):
         self.dictionary.add_word(word_1)
 
 
-        self.assertEqual({k:v for k,v in self.dictionary._data.iteritems() if k in ['x1', 'x2', 'x3', 'y1', 'y2', 'y3']},
+        self.assertEqual({k:v for k,v in self.dictionary._data.items() if k in ['x1', 'x2', 'x3', 'y1', 'y2', 'y3']},
                          {'x1': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.NOMINATIVE, r.NUMBER.SINGULAR)),
                           'x2': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.GENITIVE, r.NUMBER.SINGULAR)),
                           'x3': words.WordForm(word_1, properties=word_1.properties.clone(r.NOUN_FORM.NORMAL, r.CASE.DATIVE, r.NUMBER.SINGULAR)),

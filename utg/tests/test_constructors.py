@@ -52,7 +52,7 @@ class ConstructTests(TestCase):
                  1000000: mil_bil_properties,
                  1000000000: mil_bil_properties}
 
-        for number, properties in tests.iteritems():
+        for number, properties in tests.items():
             word = words.Word(type=r.WORD_TYPE.INTEGER, forms=['%d' % number], properties=properties)
             integer_form = constructors.construct_integer(number)
             self.assertEqual(integer_form.word, word)
@@ -69,5 +69,5 @@ class ConstructTests(TestCase):
         b = constructors.construct_integer(constructors._INTEGER_CACHE_RIGHT+1)
         self.assertFalse(a is b)
 
-        for i in xrange(constructors._INTEGER_CACHE_RIGHT - constructors._INTEGER_CACHE_LEFT+1):
+        for i in range(constructors._INTEGER_CACHE_RIGHT - constructors._INTEGER_CACHE_LEFT+1):
             self.assertEqual(id(constructors.construct_integer(i)), id(constructors.construct_integer(i)))

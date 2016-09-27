@@ -17,12 +17,12 @@ class Properties(object):
 
     def serialize(self):
         return {r.PROPERTY_TYPE.index_relation[property_type].value: property.value
-                for property_type, property in self._data.iteritems()}
+                for property_type, property in self._data.items()}
 
     @classmethod
     def deserialize(cls, data):
         return cls(*[r.PROPERTY_TYPE(int(property_type)).relation(property_value)
-                     for property_type, property_value in data.iteritems()
+                     for property_type, property_value in data.items()
                      if int(property_type) in r.PROPERTY_TYPE.index_value and
                      property_value in r.PROPERTY_TYPE(int(property_type)).relation.index_value]) # ignore not actual properties
 
@@ -53,9 +53,9 @@ class Properties(object):
         return self.__class__(self, *argv)
 
     def __unicode__(self):
-        return u'(%s)' % (u','.join(self._data[property.relation].verbose_id
-                                    for property in r.PROPERTY_TYPE.records
-                                    if property.relation in self._data))
+        return '(%s)' % (','.join(self._data[property.relation].verbose_id
+                                  for property in r.PROPERTY_TYPE.records
+                                  if property.relation in self._data))
 
     def __str__(self):
         return self.__unicode__().encode('utf-8')
@@ -67,11 +67,13 @@ class Properties(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return self.manhattan_distance()
 
     def manhattan_distance(self):
-        return len([1
-                    for property_relation, property_value in self._data.iteritems()
-                    if property_value != data.DEFAULT_PROPERTIES[property_relation]])
+        return sum(1
+                   for property_relation, property_value in self._data.items()
+                   if property_value != data.DEFAULT_PROPERTIES[property_relation])
 
 
 class Word(object):
@@ -113,7 +115,7 @@ class Word(object):
         return self.form(properties=self.properties)
 
     def all_forms(self):
-        return (WordForm(word=self, properties=_INVERTED_WORDS_CACHES__PROPERTIES[self.type][i]) for i in xrange(len(self.forms)))
+        return (WordForm(word=self, properties=_INVERTED_WORDS_CACHES__PROPERTIES[self.type][i]) for i in range(len(self.forms)))
 
     def __eq__(self, other):
         return (isinstance(other, Word) and
@@ -124,6 +126,9 @@ class Word(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return hash((self.type, self.properties))
+
     @classmethod
     def get_forms_number(cls, type):
         return len(data.WORDS_CACHES.get(type, []))
@@ -132,18 +137,18 @@ class Word(object):
     def get_keys(cls, type):
         cache = data.WORDS_CACHES[type]
         keys = [None] * len(cache)
-        for key, index in cache.iteritems():
+        for key, index in cache.items():
             keys[index] = key
         return keys
 
 
     @classmethod
-    def create_test_word(cls, type, prefix=u'w-', suffix=u'', only_required=False, properties=None):
+    def create_test_word(cls, type, prefix='w-', suffix='', only_required=False, properties=None):
         keys = cls.get_keys(type)
 
         forms = []
         for key in keys:
-            forms.append(prefix + u','.join(property.verbose_id for property in key if property is not None) + suffix)
+            forms.append(prefix + ','.join(property.verbose_id for property in key if property is not None) + suffix)
 
         if properties is None:
             properties = Properties()
@@ -169,12 +174,12 @@ class Word(object):
     @utils.lazy_property
     def has_fluent_vowel(self):
         form = self.forms[0]
-        base_vowels = u''.join([char for char in form if char in data.VOWELS])
+        base_vowels = ''.join([char for char in form if char in data.VOWELS])
 
         for other_form in self.forms[1:]:
             if not other_form: # form can be unspecified
                 continue
-            form_vowels = u''.join([char for char in other_form if char in data.VOWELS])
+            form_vowels = ''.join([char for char in other_form if char in data.VOWELS])
 
             if not form_vowels.startswith(base_vowels):
                 return True
@@ -185,7 +190,7 @@ class Word(object):
         inverted_cache = data.INVERTED_WORDS_CACHES[self.type]
 
         available_keys = [inverted_cache[index]
-                          for index in xrange(len(self.forms))
+                          for index in range(len(self.forms))
                           if self.forms[index]]
 
         for i, form in enumerate(self.forms):
@@ -235,6 +240,9 @@ class WordForm(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.word, self.form_properties))
 
 
 _INVERTED_WORDS_CACHES__PROPERTIES = {}

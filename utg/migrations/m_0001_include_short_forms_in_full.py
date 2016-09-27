@@ -17,9 +17,9 @@ def migrate(word_data):
 
 def migrate_forms(word_data, old_cache, new_cache):
     old_forms = word_data['forms']
-    new_forms = [u''] * len(new_cache)
+    new_forms = [''] * len(new_cache)
 
-    for new_key, new_index in new_cache.iteritems():
+    for new_key, new_index in new_cache.items():
         new_forms[new_index] = old_forms[get_nearest_old_index(new_key, old_cache)]
 
     word_data['forms'] = new_forms
@@ -32,7 +32,7 @@ def get_nearest_old_index(new_key, old_cache):
     best_index = None
     best_union = -1
 
-    for old_key, old_index in old_cache.iteritems():
+    for old_key, old_index in old_cache.items():
         current_union = len([1 for old, new in zip(old_key, new_key) if old == new])
 
         if current_union > best_union:

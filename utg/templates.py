@@ -9,7 +9,7 @@ from utg import transformators
 from utg import relations as r
 
 
-_VARIABLE_REGEX = re.compile(u'\[[^\]]+\]', re.UNICODE)
+_VARIABLE_REGEX = re.compile('\[[^\]]+\]', re.UNICODE)
 
 
 class Substitution(object):
@@ -21,13 +21,13 @@ class Substitution(object):
 
     def serialize(self):
         return {'id': self.id,
-                'dependencies': [dep if isinstance(dep, basestring) else dep.serialize() for dep in self.dependencies]}
+                'dependencies': [dep if isinstance(dep, str) else dep.serialize() for dep in self.dependencies]}
 
     @classmethod
     def deserialize(cls, data):
         obj = cls()
         obj.id = data['id']
-        obj.dependencies = [dep if isinstance(dep, basestring) else words.Properties.deserialize(dep) for dep in data['dependencies']]
+        obj.dependencies = [dep if isinstance(dep, str) else words.Properties.deserialize(dep) for dep in data['dependencies']]
 
         return obj
 

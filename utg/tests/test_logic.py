@@ -187,5 +187,5 @@ class LogicTests(TestCase):
                     (None, r.GENDER.MASCULINE, r.NUMBER.PLURAL): (None, r.GENDER.MASCULINE, None),
                     (r.CASE.DATIVE, r.GENDER.FEMININE, r.NUMBER.SINGULAR): (r.CASE.DATIVE, r.GENDER.MASCULINE, r.NUMBER.SINGULAR)}
 
-        for key, expected_key in expected.iteritems():
+        for key, expected_key in expected.items():
             self.assertEqual(logic.get_nearest_key(key, available_keys), expected_key)

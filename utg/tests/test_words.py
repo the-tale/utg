@@ -83,7 +83,7 @@ class WordTests(TestCase):
         super(WordTests, self).setUp()
 
     def test_init(self):
-        forms = ['x%d' % i for i in xrange(len(data.WORDS_CACHES[r.WORD_TYPE.VERB]))]
+        forms = ['x%d' % i for i in range(len(data.WORDS_CACHES[r.WORD_TYPE.VERB]))]
 
         word = words.Word(type=r.WORD_TYPE.VERB, forms=forms, properties=words.Properties(r.CASE.DATIVE, r.TIME.FUTURE))
         self.assertTrue(word.type.is_VERB)
@@ -101,23 +101,23 @@ class WordTests(TestCase):
     def test_form(self):
         word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-нс,ед,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-нс,мн,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-нс,ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), 'w-нс,ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), 'w-нс,мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), 'w-нс,ед,дт')
 
 
     def test_form__optional_property(self):
         word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.PLURAL))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-нс,мн,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-нс,мн,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-нс,мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), 'w-нс,мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), 'w-нс,мн,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), 'w-нс,мн,дт')
 
         word = words.Word.create_test_word(r.WORD_TYPE.NOUN, properties=words.Properties(r.GENDER.FEMININE, r.ANIMALITY.INANIMATE, r.NUMBER.SINGULAR))
 
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), u'w-нс,ед,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), u'w-нс,ед,дт')
-        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), u'w-нс,ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE)), 'w-нс,ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.NUMBER.PLURAL)), 'w-нс,ед,дт')
+        self.assertEqual(word.form(words.Properties(r.CASE.DATIVE, r.TIME.FUTURE)), 'w-нс,ед,дт')
 
     def test_normal_form(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True)
@@ -125,38 +125,38 @@ class WordTests(TestCase):
 
     def test_normal_form__fixed_properties(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN, only_required=True, properties=words.Properties(r.NUMBER.PLURAL))
-        self.assertEqual(word.normal_form(), u'w-нс,мн,им')
+        self.assertEqual(word.normal_form(), 'w-нс,мн,им')
 
     def test_number_of_syllables(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms[0] = u'б'
+        word.forms[0] = 'б'
         self.assertEqual(word.number_of_syllables, 1)
 
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms[0] = u'а'
+        word.forms[0] = 'а'
         self.assertEqual(word.number_of_syllables, 1)
 
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms[0] = u'абвг'
+        word.forms[0] = 'абвг'
         self.assertEqual(word.number_of_syllables, 1)
 
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms[0] = u'абракадабра'
+        word.forms[0] = 'абракадабра'
         self.assertEqual(word.number_of_syllables, 5)
 
     def test_has_fluent_vowel(self):
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms = [u'абракадубр']*len(word.forms)
+        word.forms = ['абракадубр']*len(word.forms)
         self.assertFalse(word.has_fluent_vowel)
 
         word = words.Word.create_test_word(type=r.WORD_TYPE.NOUN)
-        word.forms = [u'абракадубр'] + [u'абракадубр' + random.choice(list(data.VOWELS)) for i in xrange(len(word.forms)-1)]
+        word.forms = ['абракадубр'] + ['абракадубр' + random.choice(list(data.VOWELS)) for i in range(len(word.forms)-1)]
         self.assertFalse(word.has_fluent_vowel)
 
         word = words.Word(type=r.WORD_TYPE.NOUN,
-                                   forms=[u'сон', u'сна', u'сну', u'сон', u'сном', u'сне',
-                                          u'сны', u'снов', u'снам', u'сны', u'снами', u'снах',
-                                          u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'],
+                                   forms=['сон', 'сна', 'сну', 'сон', 'сном', 'сне',
+                                          'сны', 'снов', 'снам', 'сны', 'снами', 'снах',
+                                          'сны', 'снов', 'снам', 'сны', 'снами', 'снах'],
                                    properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
         self.assertTrue(word.has_fluent_vowel)
 
@@ -172,9 +172,9 @@ class WordTests(TestCase):
 
     def test_autofill_missed_forms(self):
         word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=[u'сон', u'сна', u'', u'сон', u'сном', u'сне',
-                                 u'сны', u'снов', u'снам', u'', u'снами', u'снах',
-                                 u'сны', u'', u'', u'', u'снами', u''],
+                          forms=['сон', 'сна', '', 'сон', 'сном', 'сне',
+                                 'сны', 'снов', 'снам', '', 'снами', 'снах',
+                                 'сны', '', '', '', 'снами', ''],
                           properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
 
         word.autofill_missed_forms()
@@ -184,9 +184,9 @@ class WordTests(TestCase):
         # print u', '.join(word.forms[12:])
 
         self.assertEqual(word.forms,
-                         [u'сон', u'сна', u'снам', u'сон', u'сном', u'сне',
-                          u'сны', u'снов', u'снам', u'сон', u'снами', u'снах',
-                          u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'])
+                         ['сон', 'сна', 'снам', 'сон', 'сном', 'сне',
+                          'сны', 'снов', 'снам', 'сон', 'снами', 'снах',
+                          'сны', 'снов', 'снам', 'сны', 'снами', 'снах'])
 
 
 class WordFormTests(TestCase):
@@ -204,14 +204,14 @@ class WordFormTests(TestCase):
         form = words.WordForm(word=self.word,
                               properties=words.Properties(r.NUMBER.PLURAL),
                               form_properties=words.Properties(r.NUMBER.PLURAL, r.CASE.DATIVE),)
-        self.assertEqual(form.form, u'w-нс,мн,дт')
+        self.assertEqual(form.form, 'w-нс,мн,дт')
 
 
     def test_starts_with_consonant_cluster(self):
         word = words.Word(type=r.WORD_TYPE.NOUN,
-                          forms=[u'сон', u'сна', u'сну', u'сон', u'сном', u'сне',
-                                 u'сны', u'снов', u'снам', u'сны', u'снами', u'снах',
-                                 u'сны', u'снов', u'снам', u'сны', u'снами', u'снах'],
+                          forms=['сон', 'сна', 'сну', 'сон', 'сном', 'сне',
+                                 'сны', 'снов', 'снам', 'сны', 'снами', 'снах',
+                                 'сны', 'снов', 'снам', 'сны', 'снами', 'снах'],
                           properties=words.Properties(r.GENDER.MASCULINE, r.ANIMALITY.INANIMATE))
 
         form = words.WordForm(word=word, properties=words.Properties(r.CASE.NOMINATIVE)) # сон

@@ -14,16 +14,16 @@ def migrate(word_data):
 
 def migrate_forms(word_data, old_cache, new_cache):
     old_forms = word_data['forms']
-    new_forms = [u''] * len(new_cache)
+    new_forms = [''] * len(new_cache)
 
-    for new_key, new_index in new_cache.iteritems():
+    for new_key, new_index in new_cache.items():
         new_forms[new_index] = old_forms[get_nearest_old_index(new_key, old_cache)]
 
     word_data['forms'] = new_forms
 
 
 def get_nearest_old_index(new_key, old_cache):
-    old_key = logic.get_nearest_key(new_key, old_cache.keys())
+    old_key = logic.get_nearest_key(new_key, list(old_cache.keys()))
     return old_cache[old_key]
 
 

@@ -42,7 +42,7 @@ def _consonant_preposition_any(slave, properties, slave_word, master_form):
         return properties.clone(r.PREPOSITION_FORM.ALTERNATIVE)
 
     # 2) часто после предлогов в и с, если с этих же согласных начинается последующее стечение согласных, например: во власти, во внушении, со слезами, со словами, со страху;
-    if (slave in (u'в', u'с') and
+    if (slave in ('в', 'с') and
         slave == master[0] and
         master_form.starts_with_consonant_cluster):
         return properties.clone(r.PREPOSITION_FORM.ALTERNATIVE)
@@ -67,8 +67,8 @@ def _vowels_preposition_any(slave, properties, slave_word, master_form):
     # Прелоги ОБО используется в особых случаях,
     # а именно с некоторыми местоимениями: обо мне, обо всех, обо всём (П.п.), обо что (В.п.), но: о тебе, о других, о чём.
     # Это традиционный принцип. Возможно, эти исключения связаны с влиянием беглых гласных, например: меня - обо мне (вместо "об мене"), сравнить: тебя - о тебе.
-    if ( slave == u'о' and
-         master in (u'всех', u'мне', u'всём', u'что', u'всей')):
+    if ( slave == 'о' and
+         master in ('всех', 'мне', 'всём', 'что', 'всей')):
         return properties.clone(r.PREPOSITION_FORM.SPECIAL)
 
     # Если существительное начинается на гласную (кроме йотированных), то пишем ОБ: сообщить об отъезде, удариться об асфальт. Это фонетический принцип.

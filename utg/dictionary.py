@@ -62,4 +62,4 @@ class Dictionary(object):
         return word
 
     def get_words(self):
-        return set(word_form.word for word_form in self._data.itervalues())
+        return set(word_form.word for word_form in self._data.values())

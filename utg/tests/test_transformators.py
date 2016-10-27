@@ -3,7 +3,7 @@ import random
 
 from unittest import TestCase
 
-import mock
+from unittest import mock
 
 from utg import words
 from utg import exceptions

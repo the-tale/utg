@@ -127,7 +127,7 @@ class WORD_TYPE(WORD_PROPERTY):
 
 
 class PROPERTY_TYPE(EnumWithText):
-    relation = Column()
+    relation = Column(no_index=False)
 
     records = ( ('CASE', 0, 'падеж', CASE),
                 ('ANIMALITY', 1, 'одушевлённость', ANIMALITY),
@@ -151,6 +151,7 @@ class PROPERTY_TYPE(EnumWithText):
                 ('NOUN_FORM', 19, 'форма существительного', NOUN_FORM),
                 ('DEPENDENCY_MODE', 20, 'вид зависимости между словами', DEPENDENCY_MODE)
               )
+
 
 # имя числительное;
 # наречие;

@@ -42,10 +42,14 @@ def _construct_integer(number):
 
 _INTEGER_CACHE_LEFT = 0
 _INTEGER_CACHE_RIGHT = 10000
-_INTEGER_CACHE = tuple(_construct_integer(i+_INTEGER_CACHE_LEFT) for i in range(_INTEGER_CACHE_RIGHT-_INTEGER_CACHE_LEFT+1))
+_INTEGER_CACHE = None
 
 def construct_integer(number):
+    global _INTEGER_CACHE
+
     if _INTEGER_CACHE_LEFT <= number <= _INTEGER_CACHE_RIGHT:
+        if _INTEGER_CACHE is None:
+            _INTEGER_CACHE = tuple(_construct_integer(i+_INTEGER_CACHE_LEFT) for i in range(_INTEGER_CACHE_RIGHT-_INTEGER_CACHE_LEFT+1))
         return _INTEGER_CACHE[number]
 
     return _construct_integer(number)

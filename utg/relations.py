@@ -159,3 +159,12 @@ class PROPERTY_TYPE(EnumWithText):
 # частица;
 # междометие;
 # деепричастие;
+
+
+class TOKEN_TYPE(WORD_PROPERTY):
+    records = (('START', 0, 'начало'),
+               ('FINISH', 1, 'конец'),
+               ('WORD', 2, 'слово'),
+               ('NUMBER', 3, 'число'),
+               ('PUNCTUATION', 4, 'пунктуация'),
+               ('SPACE', 5, u'пробел'))

@@ -161,7 +161,7 @@ class PROPERTY_TYPE(EnumWithText):
 # деепричастие;
 
 
-class TOKEN_TYPE(WORD_PROPERTY):
+class TOKEN_TYPE(EnumWithText):
     records = (('START', 0, 'начало'),
                ('FINISH', 1, 'конец'),
                ('WORD', 2, 'слово'),

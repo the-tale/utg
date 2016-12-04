@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='UTG',
-    version='0.2.0',
+    version='0.3.0',
     description='Генератор связанного русского текста',
     long_description = open('README.rst').read(),
     url='https://github.com/Tiendil/utg',
@@ -26,5 +26,4 @@ setuptools.setup(
     keywords=['text generation', 'генерация текста'],
     packages=setuptools.find_packages(),
     include_package_data=True,
-    test_suite = 'tests',
-    )
+    test_suite = 'tests')

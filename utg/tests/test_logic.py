@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-import mock
+from unittest import mock
 
 from utg import relations as r
 from utg import logic
